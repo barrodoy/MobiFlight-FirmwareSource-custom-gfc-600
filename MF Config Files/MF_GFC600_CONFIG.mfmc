@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ModuleName>MobiFlight Mega</ModuleName>
+  <PowerSavingTime>600</PowerSavingTime>
+  <CustomDevice Name="Garmin GFC 600" CustomType="GFC600" Pins="52|51|10|9|8" Config="">
+    <VirtualPins>
+      <string>52</string>
+      <string>51</string>
+      <string>10</string>
+      <string>9</string>
+      <string>8</string>
+    </VirtualPins>
+  </CustomDevice>
+</Config>
