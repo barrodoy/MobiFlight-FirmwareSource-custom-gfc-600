@@ -9,6 +9,9 @@
 #include <Wire.h>
 #endif
 
+#define BLACK 0
+#define WHITE 1
+
 #define ROL_MODE   1
 #define LVL_MODE   2
 #define VOR_MODE   3
@@ -19,11 +22,11 @@
 #define GPS_SOURCE 8
 #define NEEDLE     9
 #define VS_MODE    10
-#define VS_VALUE 11
+#define VS_VALUE   11
 
 struct Position {
-    uint8_t x;
-    uint8_t y;
+    int x;
+    int y;
 };
 
 struct Label {
@@ -33,14 +36,15 @@ struct Label {
 };
 
 struct Layout {
-    Label ActiveLateralMode;
-    Label ActiveVerticalMode;
-    Label VerticalModeValue;
-    Label ValueUnits;
-    Label ArmedLateralMode;
-    Label ArmedVerticalMode1;
-    Label ArmedVerticalMode2;
-    Label VsArrow;
+    Label ActiveLateralMode;    // Label for the active lateral mode display.
+    Label ActiveVerticalMode;   // Label for the active vertical mode display.
+    Label Vertical3DigitsValue; // Label for the vertical value display with 3 digits.
+    Label Vertical4DigitsValue; // Label for the vertical value display with 4 digits.
+    Label ValueUnits;           // Label for the units of the displayed value.
+    Label ArmedLateralMode;     // Label for the armed lateral mode display.
+    Label ArmedVerticalMode1;   // Label for the first armed vertical mode display.
+    Label ArmedVerticalMode2;   // Label for the second armed vertical mode display.
+    Label VsArrow;              // Label for the vertical speed arrow display.
 };
 
 struct Line {
@@ -73,4 +77,5 @@ private:
     void drawLine(Line line);
     void renderLateralMode(Layout layout);
     void renderVerticalMode(Layout layout);
+    void renderSymbols(const char *arrow, Label label, Position offset, bool update);
 };

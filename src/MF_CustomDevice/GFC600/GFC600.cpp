@@ -4,50 +4,58 @@
 #include "commandmessenger.h"
 
 // Lateral modes definitions:
-const int ACTIVE_LATERAL_MODE_X = 8;
-const int ACTIVE_LATERAL_MODE_Y = 17;
+const int ACTIVE_LATERAL_MODE_X = 8;     // X-coordinate of the active lateral mode label on the display.
+const int ACTIVE_LATERAL_MODE_Y = 17;    // Y-coordinate of the active lateral mode label on the display.
 
-const int ARMED_LATERAL_MODE_X = 8;
-const int ARMED_LATERAL_MODE_Y = 57;
+const int ARMED_LATERAL_MODE_X = 8;      // X-coordinate of the armed lateral mode label on the display.
+const int ARMED_LATERAL_MODE_Y = 57;     // Y-coordinate of the armed lateral mode label on the display.
 
-bool rol_mode_selected          = false;
-bool lvl_mode_selected          = false;
-bool vor_mode_selected          = false;
-bool hdg_mode_selected          = false;
-bool loc_mode_selected          = false;
-bool bc_mode_selected           = false;
-bool app_mode_selected          = false;
-bool gps_source_selected        = false;
-bool needle_not_fully_deflected = false;
+bool rol_mode_selected          = false; // Flag indicating whether the roll mode is selected.
+bool lvl_mode_selected          = false; // Flag indicating whether the level mode is selected.
+bool vor_mode_selected          = false; // Flag indicating whether the VOR mode is selected.
+bool hdg_mode_selected          = false; // Flag indicating whether the heading mode is selected.
+bool loc_mode_selected          = false; // Flag indicating whether the localizer mode is selected.
+bool bc_mode_selected           = false; // Flag indicating whether the back-course mode is selected.
+bool app_mode_selected          = false; // Flag indicating whether the approach mode is selected.
+bool gps_source_selected        = false; // Flag indicating whether the GPS source is selected.
+bool needle_not_fully_deflected = false; // Flag indicating whether the needle is not fully deflected.
 
 // Vertical modes definitions:
-const int ACTIVE_VERTICAL_MODE_X = 56;
-const int ACTIVE_VERTICAL_MODE_Y = 15;
+const int ACTIVE_VERTICAL_MODE_X = 56;     // X-coordinate of the active vertical mode label on the display.
+const int ACTIVE_VERTICAL_MODE_Y = 15;     // Y-coordinate of the active vertical mode label on the display.
 
-const int ARMED_VERTICAL_MODE1_X = 56;
-const int ARMED_VERTICAL_MODE1_Y = 57;
+const int ARMED_VERTICAL_MODE1_X = 56;     // X-coordinate of the first armed vertical mode label on the display.
+const int ARMED_VERTICAL_MODE1_Y = 57;     // Y-coordinate of the first armed vertical mode label on the display.
 
-const int VERTICAL_VALUE_X = 136;
-const int VERTICAL_VALUE_Y = 15;
+const int VERTICAL_VALUE_3_DIGITS_X = 130; // X-coordinate of the vertical value label with 3 digits on the display.
+const int VERTICAL_VALUE_3_DIGITS_Y = 20;  // Y-coordinate of the vertical value label with 3 digits on the display.
 
-const int VERTICAL_VALUE_UNITS_X = 142;
-const int VERTICAL_VALUE_UNITS_Y = 35;
+const int VERTICAL_VALUE_4_DIGITS_X = 126; // X-coordinate of the vertical value label with 4 digits on the display.
+const int VERTICAL_VALUE_4_DIGITS_Y = 20;  // Y-coordinate of the vertical value label with 4 digits on the display.
 
-const int VERTICAL_ARROW_X = 128;
-const int VERTICAL_ARROW_Y = 15;
+const int VERTICAL_VALUE_UNITS_X = 142;    // X-coordinate of the vertical value units label on the display.
+const int VERTICAL_VALUE_UNITS_Y = 35;     // Y-coordinate of the vertical value units label on the display.
 
-const char *DOWN_ARROW = "↓";
-const char *UP_ARROW   = "↑";
+const int VERTICAL_ARROW_X = 118;          // X-coordinate of the vertical speed arrow on the display.
+const int VERTICAL_ARROW_Y = 18;           // Y-coordinate of the vertical speed arrow on the display.
 
-bool vs_mode_selected = false;
-int  vs_fpm_value     = 0;
+const char *DOWN_ARROW = "↓";              // Symbol representing a downward arrow.
+const char *UP_ARROW   = "↑";              // Symbol representing an upward arrow.
+const int   ARROW_SIZE = 20;
 
-// Common modes definitions
+const int MAX_3_DIGITS_VALUE = 999;  // Maximum value that can be displayed with 3 digits.
+const int MAX_4_DIGITS_VALUE = 9999; // Maximum value that can be displayed with 4 digits.
 
-const uint8_t *ACTIVE_MODE_FONT = u8g2_font_logisoso16_tr;
-const uint8_t *ARMED_MODE_FONT  = u8g2_font_profont12_mr;
+bool vs_mode_selected = false;       // Flag indicating whether the vertical speed mode is selected.
+int  vs_fpm_value     = 0;           // Value of the vertical speed in feet per minute.
 
-const char *CLEAR_STRING = "      ";
+// Common modes definitions:
+
+const uint8_t *ACTIVE_MODE_FONT = u8g2_font_logisoso16_tr;  // Font used for the active mode labels.
+const uint8_t *ARMED_MODE_FONT  = u8g2_font_profont12_mr;   // Font used for the armed mode labels.
+const uint8_t *ARROW_FONT       = u8g2_font_9x15_m_symbols; // Font used for arrow symbols.
+
+const char *CLEAR_STRING = "      ";                        // String representing empty spaces used for clearing the display.
 
 /*
 struct Layout {
@@ -75,15 +83,26 @@ Line RightLine = {
     {162, 57}  // EndPos
 };
 
+// Define an instance of the Layout struct named DisplayLayout and initialize its members.
 Layout DisplayLayout = {
+    // ActiveLateralMode label settings: font ACTIVE_MODE_FONT, font size 16, position (ACTIVE_LATERAL_MODE_X, ACTIVE_LATERAL_MODE_Y).
     {ACTIVE_MODE_FONT, 16, {ACTIVE_LATERAL_MODE_X, ACTIVE_LATERAL_MODE_Y}},
+    // ActiveVerticalMode label settings: font ACTIVE_MODE_FONT, font size 16, position (ACTIVE_VERTICAL_MODE_X, ACTIVE_LATERAL_MODE_Y).
     {ACTIVE_MODE_FONT, 16, {ACTIVE_VERTICAL_MODE_X, ACTIVE_LATERAL_MODE_Y}},
-    {ARMED_MODE_FONT, 12, {VERTICAL_VALUE_X, VERTICAL_VALUE_Y}},
+    // Vertical3DigitsValue label settings: font ARMED_MODE_FONT, font size 12, position (VERTICAL_VALUE_3_DIGITS_X, VERTICAL_VALUE_3_DIGITS_Y).
+    {ACTIVE_MODE_FONT, 12, {VERTICAL_VALUE_3_DIGITS_X, VERTICAL_VALUE_3_DIGITS_Y}},
+    // Vertical4DigitsValue label settings: font ARMED_MODE_FONT, font size 12, position (VERTICAL_VALUE_4_DIGITS_X, VERTICAL_VALUE_4_DIGITS_Y).
+    {ACTIVE_MODE_FONT, 12, {VERTICAL_VALUE_4_DIGITS_X, VERTICAL_VALUE_4_DIGITS_Y}},
+    // ValueUnits label settings: font ARMED_MODE_FONT, font size 12, position (VERTICAL_VALUE_UNITS_X, VERTICAL_VALUE_UNITS_Y).
     {ARMED_MODE_FONT, 12, {VERTICAL_VALUE_UNITS_X, VERTICAL_VALUE_UNITS_Y}},
+    // ArmedLateralMode label settings: font ARMED_MODE_FONT, font size 12, position (ARMED_LATERAL_MODE_X, ARMED_LATERAL_MODE_Y).
     {ARMED_MODE_FONT, 12, {ARMED_LATERAL_MODE_X, ARMED_LATERAL_MODE_Y}},
+    // ArmedVerticalMode1 label settings: font ARMED_MODE_FONT, font size 12, position (ARMED_VERTICAL_MODE1_X, ARMED_VERTICAL_MODE1_Y).
     {ARMED_MODE_FONT, 12, {ARMED_VERTICAL_MODE1_X, ARMED_VERTICAL_MODE1_Y}},
+    // ArmedVerticalMode2 label settings: font ARMED_MODE_FONT, font size 12, position (120, 18).
     {ARMED_MODE_FONT, 12, {120, 18}},
-    {ARMED_MODE_FONT, 12, {VERTICAL_ARROW_X, VERTICAL_ARROW_Y}}};
+    // VsArrow label settings: font ARROW_FONT, font size 12, position (VERTICAL_ARROW_X, VERTICAL_ARROW_Y).
+    {ARROW_FONT, ARROW_SIZE, {VERTICAL_ARROW_X, VERTICAL_ARROW_Y}}};
 
 Position OffsetActive = {
     0,
@@ -92,6 +111,19 @@ Position OffsetActive = {
 Position OffsetArmed = {
     5,
     5};
+
+Position Offset4Digits = {
+    -6,
+    0};
+
+Position Offset3DigitsArrow{
+    0, -5};
+
+Position Offset4DigitsArrow{
+    -8, 0};
+
+Position OffsetZero{
+    20, 0};
 
 GFC600::GFC600(uint8_t clk, uint8_t data, uint8_t cs, uint8_t dc, uint8_t reset)
 {
@@ -201,22 +233,44 @@ void GFC600::renderVerticalMode(Layout layout)
         _renderLabel("FPM", layout.ValueUnits, NoOffset, 0);
 
         if (vs_fpm_value == 0) {
-            _renderLabel("0", layout.VerticalModeValue, NoOffset, 0);
+            _oledDisplay->setDrawColor(BLACK);
+            _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 16, VERTICAL_VALUE_3_DIGITS_Y - 20, 36, 20);
+            _renderLabel("0", layout.Vertical3DigitsValue, OffsetZero, 0);
         }
 
         else if (vs_fpm_value > 0) {
             char vs_fpm_string[10];
             sprintf(vs_fpm_string, "%d", vs_fpm_value);
-            _renderLabel(UP_ARROW, layout.VsArrow, NoOffset, 0);
-            _renderLabel(vs_fpm_string, layout.VerticalModeValue, NoOffset, 0);
+
+            if (vs_fpm_value <= MAX_3_DIGITS_VALUE) {
+                _oledDisplay->setDrawColor(BLACK);
+                _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 18, VERTICAL_VALUE_3_DIGITS_Y - 15, 12, 20);
+                renderSymbols(UP_ARROW, layout.VsArrow, NoOffset, 0);
+                _renderLabel(vs_fpm_string, layout.Vertical3DigitsValue, NoOffset, 0);
+            }
+
+            else {
+                renderSymbols(UP_ARROW, layout.VsArrow, Offset4DigitsArrow, 0);
+                _renderLabel(vs_fpm_string, layout.Vertical4DigitsValue, Offset4Digits, 0);
+            }
+
         }
 
         else {
             char vs_fpm_string[10];
             sprintf(vs_fpm_string, "%d", vs_fpm_value * (-1));
 
-            _renderLabel(DOWN_ARROW, layout.VsArrow, NoOffset, 0);
-            _renderLabel(vs_fpm_string, layout.VerticalModeValue, NoOffset, 0);
+            if (vs_fpm_value >= (-1) * MAX_3_DIGITS_VALUE) {
+                _oledDisplay->setDrawColor(BLACK);
+                _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 18, VERTICAL_VALUE_3_DIGITS_Y - 15, 12, 20);
+                renderSymbols(DOWN_ARROW, layout.VsArrow, NoOffset, 0);
+                _renderLabel(vs_fpm_string, layout.Vertical3DigitsValue, NoOffset, 0);
+            }
+
+            else {
+                renderSymbols(DOWN_ARROW, layout.VsArrow, Offset4DigitsArrow, 0);
+                _renderLabel(vs_fpm_string, layout.Vertical4DigitsValue, Offset4Digits, 0);
+            }
         }
     }
 }
@@ -346,5 +400,20 @@ void GFC600::_renderLabel(const char *text, Label label, Position offset, bool u
     _oledDisplay->setCursor(offset.x + label.Pos.x, offset.y + label.Pos.y);
 
     _oledDisplay->print(text);
+    if (update) _oledDisplay->sendBuffer();
+}
+
+void GFC600::renderSymbols(const char *arrow, Label label, Position offset, bool update)
+{
+    _oledDisplay->setFont(label.Font);
+    u8g2_int_t w = _oledDisplay->getStrWidth(arrow);
+    u8g2_int_t h = label.FontSize;
+    _oledDisplay->setDrawColor(0);
+    _oledDisplay->drawBox(offset.x + label.Pos.x, offset.y + label.Pos.y - h, w, h);
+    _oledDisplay->setDrawColor(1);
+    _oledDisplay->setFontMode(0);
+    _oledDisplay->setCursor(offset.x + label.Pos.x, offset.y + label.Pos.y);
+
+    _oledDisplay->drawUTF8(offset.x + label.Pos.x, offset.y + label.Pos.y, arrow);
     if (update) _oledDisplay->sendBuffer();
 }
