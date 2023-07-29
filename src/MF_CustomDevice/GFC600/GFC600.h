@@ -23,6 +23,12 @@
 #define NEEDLE     9
 #define VS_MODE    10
 #define VS_VALUE   11
+#define IAS_MODE   12
+#define IAS_VALUE  13
+#define PIT_MODE   14
+#define ALT_MODE   15
+#define ALT_VALUE  16
+#define ALTS_MODE  17
 
 struct Position {
     int x;
@@ -38,6 +44,7 @@ struct Label {
 struct Layout {
     Label ActiveLateralMode;    // Label for the active lateral mode display.
     Label ActiveVerticalMode;   // Label for the active vertical mode display.
+    Label Vertical2DigitsValue;
     Label Vertical3DigitsValue; // Label for the vertical value display with 3 digits.
     Label Vertical4DigitsValue; // Label for the vertical value display with 4 digits.
     Label ValueUnits;           // Label for the units of the displayed value.
@@ -78,4 +85,5 @@ private:
     void renderLateralMode(Layout layout);
     void renderVerticalMode(Layout layout);
     void renderSymbols(const char *arrow, Label label, Position offset, bool update);
+    void handleVerticalSpeedMode(Layout layout);
 };

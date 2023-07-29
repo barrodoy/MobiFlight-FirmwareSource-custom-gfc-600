@@ -147,6 +147,34 @@
         <configrefs />
       </settings>
     </config>
+    <config guid="f7e87749-7c26-45fd-8e1c-600c61a969af">
+      <active>true</active>
+      <description>Vertical: IAS Mode Selected</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT AIRSPEED HOLD,Bool)" UUID="a4bace5b-4a8b-4c56-9af7-e52e149d02d3" />
+        <modifiers>
+          <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
+          <comparison active="False" value="" operand="" ifValue="" elseValue="" />
+        </modifiers>
+        <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="12" value="$" />
+        <preconditions />
+        <configrefs />
+      </settings>
+    </config>
+    <config guid="2cedc451-371a-4436-9691-6fc809faec51">
+      <active>true</active>
+      <description>Vertical: IAS Selected KIAS Value</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT AIRSPEED HOLD VAR,Knots)" UUID="c6348d07-b8b3-4e31-a28d-8615cf8e837e" />
+        <modifiers>
+          <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
+          <comparison active="False" value="" operand="" ifValue="" elseValue="" />
+        </modifiers>
+        <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="13" value="$" />
+        <preconditions />
+        <configrefs />
+      </settings>
+    </config>
   </outputs>
   <inputs />
 </MobiflightConnector>

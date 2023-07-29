@@ -49,6 +49,14 @@ const int MAX_4_DIGITS_VALUE = 9999; // Maximum value that can be displayed with
 bool vs_mode_selected = false;       // Flag indicating whether the vertical speed mode is selected.
 int  vs_fpm_value     = 0;           // Value of the vertical speed in feet per minute.
 
+bool ias_mode_selected = false;
+int  ias_kts_value     = 0;
+
+bool pit_mode_selected = false;
+
+bool alt_mode_selected = false;
+int  alt_ft_value      = 0;
+
 // Common modes definitions:
 
 const uint8_t *ACTIVE_MODE_FONT = u8g2_font_logisoso16_tr;  // Font used for the active mode labels.
@@ -89,6 +97,7 @@ Layout DisplayLayout = {
     {ACTIVE_MODE_FONT, 16, {ACTIVE_LATERAL_MODE_X, ACTIVE_LATERAL_MODE_Y}},
     // ActiveVerticalMode label settings: font ACTIVE_MODE_FONT, font size 16, position (ACTIVE_VERTICAL_MODE_X, ACTIVE_LATERAL_MODE_Y).
     {ACTIVE_MODE_FONT, 16, {ACTIVE_VERTICAL_MODE_X, ACTIVE_LATERAL_MODE_Y}},
+    {ACTIVE_MODE_FONT, 12, {VERTICAL_VALUE_3_DIGITS_X - 5, VERTICAL_VALUE_3_DIGITS_Y}},
     // Vertical3DigitsValue label settings: font ARMED_MODE_FONT, font size 12, position (VERTICAL_VALUE_3_DIGITS_X, VERTICAL_VALUE_3_DIGITS_Y).
     {ACTIVE_MODE_FONT, 12, {VERTICAL_VALUE_3_DIGITS_X, VERTICAL_VALUE_3_DIGITS_Y}},
     // Vertical4DigitsValue label settings: font ARMED_MODE_FONT, font size 12, position (VERTICAL_VALUE_4_DIGITS_X, VERTICAL_VALUE_4_DIGITS_Y).
@@ -224,54 +233,96 @@ void GFC600::renderLateralMode(Layout layout)
     // If none of the above conditions match and no default label is set, no label will be rendered for the active lateral mode.
 }
 
+/**
+ * Handle the display of the Vertical Speed mode on the OLED display.
+ * This function updates the OLED display to show the current vertical speed information.
+ *
+ * @param layout The struct containing the layout configuration for the vertical speed mode.
+ *              The struct should contain labels and positions to render the information.
+ */
+void GFC600::handleVerticalSpeedMode(Layout layout)
+{
+    // Render labels for the active and armed vertical modes, and units (e.g., "VS", "ALTS", "FPM").
+    _renderLabel("VS", layout.ActiveVerticalMode, NoOffset, false);
+    _renderLabel("ALTS", layout.ArmedVerticalMode1, NoOffset, false);
+    _renderLabel("FPM", layout.ValueUnits, NoOffset, false);
+
+    // Check if the vertical speed is zero.
+    if (vs_fpm_value == 0) {
+        // If the vertical speed is zero, display "0" without an arrow symbol.
+        _oledDisplay->setDrawColor(BLACK);
+        _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 16, VERTICAL_VALUE_3_DIGITS_Y - 20, 36, 20);
+        _renderLabel("0", layout.Vertical3DigitsValue, OffsetZero, false);
+    }
+
+    // Check if the vertical speed is positive.
+    else if (vs_fpm_value > 0) {
+        char vs_fpm_string[10];
+        sprintf(vs_fpm_string, "%d", vs_fpm_value);
+
+        // If the vertical speed is within the range of a 3-digit value, display it with an up arrow symbol.
+        if (vs_fpm_value <= MAX_3_DIGITS_VALUE) {
+            _oledDisplay->setDrawColor(BLACK);
+            _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 18, VERTICAL_VALUE_3_DIGITS_Y - 15, 12, 20);
+            renderSymbols(UP_ARROW, layout.VsArrow, NoOffset, false);
+            _renderLabel(vs_fpm_string, layout.Vertical3DigitsValue, NoOffset, false);
+        }
+
+        // If the vertical speed is larger than a 3-digit value, display it with a 4-digit layout.
+        else {
+            renderSymbols(UP_ARROW, layout.VsArrow, Offset4DigitsArrow, false);
+            _renderLabel(vs_fpm_string, layout.Vertical4DigitsValue, Offset4Digits, false);
+        }
+    }
+
+    // Vertical speed is negative.
+    else {
+        char vs_fpm_string[10];
+        sprintf(vs_fpm_string, "%d", vs_fpm_value * (-1));
+
+        // If the vertical speed is within the range of a 3-digit value, display it with a down arrow symbol.
+        if (vs_fpm_value >= (-1) * MAX_3_DIGITS_VALUE) {
+            _oledDisplay->setDrawColor(BLACK);
+            _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 18, VERTICAL_VALUE_3_DIGITS_Y - 15, 12, 20);
+            renderSymbols(DOWN_ARROW, layout.VsArrow, NoOffset, false);
+            _renderLabel(vs_fpm_string, layout.Vertical3DigitsValue, NoOffset, false);
+        }
+
+        // If the vertical speed is larger than a 3-digit value, display it with a 4-digit layout.
+        else {
+            renderSymbols(DOWN_ARROW, layout.VsArrow, Offset4DigitsArrow, false);
+            _renderLabel(vs_fpm_string, layout.Vertical4DigitsValue, Offset4Digits, false);
+        }
+    }
+}
 void GFC600::renderVerticalMode(Layout layout)
 {
     if (vs_mode_selected) {
+        handleVerticalSpeedMode(layout);
+    }
 
-        _renderLabel("VS", layout.ActiveVerticalMode, NoOffset, 0);
-        _renderLabel("ALTS", layout.ArmedVerticalMode1, NoOffset, 0);
-        _renderLabel("FPM", layout.ValueUnits, NoOffset, 0);
+    else if (ias_mode_selected) {
+        _renderLabel("IAS", layout.ActiveVerticalMode, NoOffset, false);
+        _renderLabel("ALTS", layout.ArmedVerticalMode1, NoOffset, false);
+        _renderLabel("KTS", layout.ValueUnits, NoOffset, false);
 
-        if (vs_fpm_value == 0) {
+        char ias_kts_string[10];
+        sprintf(ias_kts_string, "%d", vs_fpm_value);
+
+        if (ias_kts_value <= 99) {
             _oledDisplay->setDrawColor(BLACK);
-            _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 16, VERTICAL_VALUE_3_DIGITS_Y - 20, 36, 20);
-            _renderLabel("0", layout.Vertical3DigitsValue, OffsetZero, 0);
-        }
-
-        else if (vs_fpm_value > 0) {
-            char vs_fpm_string[10];
-            sprintf(vs_fpm_string, "%d", vs_fpm_value);
-
-            if (vs_fpm_value <= MAX_3_DIGITS_VALUE) {
-                _oledDisplay->setDrawColor(BLACK);
-                _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 18, VERTICAL_VALUE_3_DIGITS_Y - 15, 12, 20);
-                renderSymbols(UP_ARROW, layout.VsArrow, NoOffset, 0);
-                _renderLabel(vs_fpm_string, layout.Vertical3DigitsValue, NoOffset, 0);
-            }
-
-            else {
-                renderSymbols(UP_ARROW, layout.VsArrow, Offset4DigitsArrow, 0);
-                _renderLabel(vs_fpm_string, layout.Vertical4DigitsValue, Offset4Digits, 0);
-            }
-
+            _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 12, VERTICAL_VALUE_3_DIGITS_Y - 15, 12, 20);
+            _renderLabel(ias_kts_string, layout.Vertical2DigitsValue, NoOffset, false);
         }
 
         else {
-            char vs_fpm_string[10];
-            sprintf(vs_fpm_string, "%d", vs_fpm_value * (-1));
-
-            if (vs_fpm_value >= (-1) * MAX_3_DIGITS_VALUE) {
-                _oledDisplay->setDrawColor(BLACK);
-                _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 18, VERTICAL_VALUE_3_DIGITS_Y - 15, 12, 20);
-                renderSymbols(DOWN_ARROW, layout.VsArrow, NoOffset, 0);
-                _renderLabel(vs_fpm_string, layout.Vertical3DigitsValue, NoOffset, 0);
-            }
-
-            else {
-                renderSymbols(DOWN_ARROW, layout.VsArrow, Offset4DigitsArrow, 0);
-                _renderLabel(vs_fpm_string, layout.Vertical4DigitsValue, Offset4Digits, 0);
-            }
+            _renderLabel(ias_kts_string, layout.Vertical2DigitsValue, NoOffset, false);
         }
+    }
+
+    else if (pit_mode_selected) {
+        _renderLabel("PIT", layout.ActiveVerticalMode, NoOffset, false);
+        _renderLabel("ALTS", layout.ArmedVerticalMode1, NoOffset, false);
     }
 }
 
@@ -372,6 +423,27 @@ void GFC600::set(uint8_t messageID, const char *data)
         vs_fpm_value = atoi(data);
         cmdMessenger.sendCmd(kDebug, "VS FPM value: ");
         cmdMessenger.sendCmd(kDebug, vs_fpm_value);
+        break;
+
+    case IAS_MODE:
+        // Implement the logic for setting Active VAPP Mode
+        ias_mode_selected = atoi(data);
+        cmdMessenger.sendCmd(kDebug, "IAS mode value: ");
+        cmdMessenger.sendCmd(kDebug, ias_mode_selected);
+        break;
+
+    case IAS_VALUE:
+        // Implement the logic for setting Active VAPP Mode
+        ias_kts_value = atoi(data);
+        cmdMessenger.sendCmd(kDebug, "IAS KIAS value: ");
+        cmdMessenger.sendCmd(kDebug, ias_kts_value);
+        break;
+
+    case PIT_MODE:
+        // Implement the logic for setting Active VAPP Mode
+        pit_mode_selected = atoi(data);
+        cmdMessenger.sendCmd(kDebug, "Pit Mode value: ");
+        cmdMessenger.sendCmd(kDebug, pit_mode_selected);
         break;
 
     default:
