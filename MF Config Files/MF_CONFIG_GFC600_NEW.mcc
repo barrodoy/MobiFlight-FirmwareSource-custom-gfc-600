@@ -175,6 +175,66 @@
         <configrefs />
       </settings>
     </config>
+    <config guid="f60351cc-a0ed-4bad-8305-936063791cbf">
+      <active>true</active>
+      <description>Vertical: PIT Mode Selected</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT PITCH HOLD,Bool)" UUID="611c2ee4-a16a-439f-b482-3c8dbe97b47c" />
+        <modifiers>
+          <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
+          <comparison active="False" value="" operand="" ifValue="" elseValue="" />
+        </modifiers>
+        <display type="-" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" pin="" pinBrightness="255" />
+        <preconditions />
+        <configrefs />
+      </settings>
+    </config>
+    <config guid="432e909f-81e3-43c7-a43a-c63674d9b8ad">
+      <active>true</active>
+      <description>Vertical: ALT Mode Selected</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT ALTITUDE LOCK,Bool)" UUID="09df7de7-01e4-43ac-8015-9573385d8acb" />
+        <modifiers>
+          <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
+          <comparison active="False" value="" operand="" ifValue="" elseValue="" />
+        </modifiers>
+        <display type="-" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" pin="" pinBrightness="255" />
+        <preconditions />
+        <configrefs />
+      </settings>
+    </config>
+    <config guid="d8e3d5c7-31d6-43f3-83f8-a81226533bdb">
+      <active>true</active>
+      <description>Vertical: ALT Select FT Value</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT ALTITUDE LOCK VAR,Feet)" UUID="7ac4737f-b97d-4bbb-af35-7067a5f1c1aa" />
+        <modifiers>
+          <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
+          <comparison active="False" value="" operand="" ifValue="" elseValue="" />
+        </modifiers>
+        <display type="-" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" pin="" pinBrightness="255" />
+        <preconditions />
+        <configrefs />
+      </settings>
+    </config>
+    <config guid="e9dc6c2b-c95e-4051-a25a-c2f90066f8fb">
+      <active>true</active>
+      <description>Vertical: ALTS Mode Selected</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT FLIGHT LEVEL CHANGE,bool)" UUID="276c8b8b-c886-4653-b531-b9eb4ca661d3" />
+        <modifiers>
+          <transformation active="False" expression="?+!+#" substrStart="0" substrEnd="7" />
+          <comparison active="False" value="" operand="" ifValue="" elseValue="" />
+        </modifiers>
+        <display type="-" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" pin="" pinBrightness="255" />
+        <preconditions />
+        <configrefs>
+          <configref active="True" ref="1cee48e6-fe30-44e8-97ce-b877d0f1bd40" placeholder="#" />
+          <configref active="True" ref="f7e87749-7c26-45fd-8e1c-600c61a969af" placeholder="!" />
+          <configref active="True" ref="f60351cc-a0ed-4bad-8305-936063791cbf" placeholder="?" />
+        </configrefs>
+      </settings>
+    </config>
   </outputs>
   <inputs />
 </MobiflightConnector>
