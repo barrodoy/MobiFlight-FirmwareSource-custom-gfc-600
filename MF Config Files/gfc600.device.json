@@ -1,0 +1,85 @@
+{
+  "$schema": "./mfdevice.schema.json",
+  "Info": {
+    "Label": "Garmin GFC 600",
+    "Type": "GFC600",
+    "Author": "BR4593",
+    "URL": "https://github.com",
+    "Version": "1.0.0"
+  },
+  "Config": {
+    "Pins": [
+      "CLK",
+      "Data",
+      "CS",
+      "D/C",
+      "Reset"
+    ],
+    "isI2C": false
+  },
+  "MessageTypes": [
+    {
+      "id": 1,
+      "label": "ROL Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+    {
+      "id": 2,
+      "label": "LVL Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+    {
+      "id": 3,
+      "label": "VOR Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+    {
+      "id": 4,
+      "label": "HDG Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+		    {
+      "id": 5,
+      "label": "LOC Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+			    {
+      "id": 6,
+      "label": "BC Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+	
+				    {
+      "id": 7,
+      "label": "APP Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+	
+					    {
+      "id": 8,
+      "label": "GPS Source",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+	
+	{
+      "id": 9,
+      "label": "NAV Needle Not Full Deflected",
+      "description": "0 -> Full Defelection, 1 -> OK"
+    },
+	
+		{
+      "id": 10,
+      "label": "VS Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+	
+			{
+      "id": 11,
+      "label": "VS FPM Value",
+      "description": "$ will send the value to the board"
+    }
+	
+	
+	
+  ]
+}
