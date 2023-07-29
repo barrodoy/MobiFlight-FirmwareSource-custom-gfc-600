@@ -17,6 +17,9 @@
 #define BC_MODE    6
 #define APP_MODE   7
 #define GPS_SOURCE 8
+#define NEEDLE     9
+#define VS_MODE    10
+#define VS_VALUE 11
 
 struct Position {
     uint8_t x;
@@ -34,9 +37,10 @@ struct Layout {
     Label ActiveVerticalMode;
     Label VerticalModeValue;
     Label ValueUnits;
-    Label ArmedLateralMode1;
+    Label ArmedLateralMode;
     Label ArmedVerticalMode1;
     Label ArmedVerticalMode2;
+    Label VsArrow;
 };
 
 struct Line {
@@ -67,5 +71,6 @@ private:
     void _stop();
     void _renderLabel(const char *text, Label label, Position offset, bool update = false);
     void drawLine(Line line);
-    void renderActiveLateralMode(Layout layout);
+    void renderLateralMode(Layout layout);
+    void renderVerticalMode(Layout layout);
 };
