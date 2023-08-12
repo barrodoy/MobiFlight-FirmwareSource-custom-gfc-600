@@ -12,9 +12,10 @@
 #define BLACK 0
 #define WHITE 1
 
+#define PFT        0
 #define ROL_MODE   1
 #define LVL_MODE   2
-#define VOR_MODE   3
+#define NAV_MODE   3
 #define HDG_MODE   4
 #define LOC_MODE   5
 #define BC_MODE    6
@@ -29,6 +30,7 @@
 #define ALT_MODE   15
 #define ALT_VALUE  16
 #define ALTS_MODE  17
+#define CURR_ALT   18
 
 struct Position {
     int x;
@@ -47,6 +49,7 @@ struct Layout {
     Label Vertical2DigitsValue;
     Label Vertical3DigitsValue; // Label for the vertical value display with 3 digits.
     Label Vertical4DigitsValue; // Label for the vertical value display with 4 digits.
+    Label Vertical5DigitsValue; // Label for the vertical value display with 4 digits.
     Label ValueUnits;           // Label for the units of the displayed value.
     Label ArmedLateralMode;     // Label for the armed lateral mode display.
     Label ArmedVerticalMode1;   // Label for the first armed vertical mode display.
@@ -86,4 +89,8 @@ private:
     void renderVerticalMode(Layout layout);
     void renderSymbols(const char *arrow, Label label, Position offset, bool update);
     void handleVerticalSpeedMode(Layout layout);
+    void handleAltMode(Layout layout);
+    void handleIasMode(Layout layout);
+    void clearArea(int start_x, int start_y, int end_x, int end_y);
+    int  roundToClosestHundred(int value);
 };

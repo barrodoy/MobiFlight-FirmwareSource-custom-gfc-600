@@ -37,7 +37,7 @@
     </config>
     <config guid="44e59186-053e-42b2-8e15-87352002b0fa">
       <active>true</active>
-      <description>Lateral: VOR Mode Selected</description>
+      <description>Lateral: NAV Mode Selected</description>
       <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
         <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT NAV1 LOCK,Bool)" UUID="4224fc05-b6e9-44d4-9468-c546a05a99c4" />
         <modifiers>
@@ -151,7 +151,7 @@
       <active>true</active>
       <description>Vertical: IAS Mode Selected</description>
       <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT AIRSPEED HOLD,Bool)" UUID="a4bace5b-4a8b-4c56-9af7-e52e149d02d3" />
+        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT FLIGHT LEVEL CHANGE,bool)" UUID="276c8b8b-c886-4653-b531-b9eb4ca661d3" />
         <modifiers>
           <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
           <comparison active="False" value="" operand="" ifValue="" elseValue="" />
@@ -184,21 +184,7 @@
           <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
           <comparison active="False" value="" operand="" ifValue="" elseValue="" />
         </modifiers>
-        <display type="-" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" pin="" pinBrightness="255" />
-        <preconditions />
-        <configrefs />
-      </settings>
-    </config>
-    <config guid="432e909f-81e3-43c7-a43a-c63674d9b8ad">
-      <active>true</active>
-      <description>Vertical: ALT Mode Selected</description>
-      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT ALTITUDE LOCK,Bool)" UUID="09df7de7-01e4-43ac-8015-9573385d8acb" />
-        <modifiers>
-          <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
-          <comparison active="False" value="" operand="" ifValue="" elseValue="" />
-        </modifiers>
-        <display type="-" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" pin="" pinBrightness="255" />
+        <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="14" value="$" />
         <preconditions />
         <configrefs />
       </settings>
@@ -212,18 +198,18 @@
           <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
           <comparison active="False" value="" operand="" ifValue="" elseValue="" />
         </modifiers>
-        <display type="-" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" pin="" pinBrightness="255" />
+        <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="16" value="$" />
         <preconditions />
         <configrefs />
       </settings>
     </config>
     <config guid="e9dc6c2b-c95e-4051-a25a-c2f90066f8fb">
       <active>true</active>
-      <description>Vertical: ALTS Mode Selected</description>
+      <description>Vertical: ALTS Mode Armed</description>
       <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
         <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT FLIGHT LEVEL CHANGE,bool)" UUID="276c8b8b-c886-4653-b531-b9eb4ca661d3" />
         <modifiers>
-          <transformation active="False" expression="?+!+#" substrStart="0" substrEnd="7" />
+          <transformation active="True" expression="?+!+#" substrStart="0" substrEnd="7" />
           <comparison active="False" value="" operand="" ifValue="" elseValue="" />
         </modifiers>
         <display type="-" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" pin="" pinBrightness="255" />
@@ -232,6 +218,64 @@
           <configref active="True" ref="1cee48e6-fe30-44e8-97ce-b877d0f1bd40" placeholder="#" />
           <configref active="True" ref="f7e87749-7c26-45fd-8e1c-600c61a969af" placeholder="!" />
           <configref active="True" ref="f60351cc-a0ed-4bad-8305-936063791cbf" placeholder="?" />
+        </configrefs>
+      </settings>
+    </config>
+    <config guid="e9007bd8-2262-4479-8986-3289957a7d25">
+      <active>true</active>
+      <description>Lateral: LOC Mode Selected</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="LVAR" Value="" />
+        <modifiers>
+          <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
+          <comparison active="False" value="" operand="" ifValue="" elseValue="" />
+        </modifiers>
+        <display type="" serial="" pin="" pinBrightness="255" />
+        <preconditions />
+        <configrefs />
+      </settings>
+    </config>
+    <config guid="e3060e3e-75c0-4c8b-96a5-dc4880c98d83">
+      <active>true</active>
+      <description>Vertical: Current Altitude</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="CODE" Value="(A:INDICATED ALTITUDE,Feet)" UUID="3110ef7c-3b03-4d05-99d6-fb582d3ac3f8" />
+        <modifiers>
+          <transformation active="True" expression="(Round($,0))" substrStart="0" substrEnd="7" />
+          <comparison active="False" value="if($%100)&lt;50" operand="=" ifValue="1" elseValue="0" />
+        </modifiers>
+        <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="18" value="$" />
+        <preconditions />
+        <configrefs />
+      </settings>
+    </config>
+    <config guid="7be9e9ea-a3d8-44c2-9d6b-5e28b8e2174a">
+      <active>true</active>
+      <description>Vertical: ALT Mode Selected</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT ALTITUDE LOCK,Bool)" UUID="09df7de7-01e4-43ac-8015-9573385d8acb" />
+        <modifiers>
+          <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
+          <comparison active="False" value="" operand="" ifValue="" elseValue="" />
+        </modifiers>
+        <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="15" value="$" />
+        <preconditions />
+        <configrefs />
+      </settings>
+    </config>
+    <config guid="ccf1a760-5ab9-4bae-b45a-308537041f8d">
+      <active>false</active>
+      <description>Vertical Rounded Current Altitude</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="LVAR" Value="" />
+        <modifiers>
+          <transformation active="True" expression="#%100" substrStart="0" substrEnd="7" />
+          <comparison active="True" value="50" operand="&lt;" ifValue="(#%10)*100" elseValue="((#%10)+1)*100" />
+        </modifiers>
+        <display type="-" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" pin="" pinBrightness="255" />
+        <preconditions />
+        <configrefs>
+          <configref active="True" ref="e3060e3e-75c0-4c8b-96a5-dc4880c98d83" placeholder="#" />
         </configrefs>
       </settings>
     </config>
