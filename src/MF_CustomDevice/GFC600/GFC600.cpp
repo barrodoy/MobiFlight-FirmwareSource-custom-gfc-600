@@ -5,7 +5,7 @@
 
 // Lateral modes definitions:
 const int ACTIVE_LATERAL_MODE_X = 8;     // X-coordinate of the active lateral mode label on the display.
-const int ACTIVE_LATERAL_MODE_Y = 17;    // Y-coordinate of the active lateral mode label on the display.
+const int ACTIVE_LATERAL_MODE_Y = 20;    // Y-coordinate of the active lateral mode label on the display.
 
 const int ARMED_LATERAL_MODE_X = 8;      // X-coordinate of the armed lateral mode label on the display.
 const int ARMED_LATERAL_MODE_Y = 57;     // Y-coordinate of the armed lateral mode label on the display.
@@ -47,7 +47,7 @@ const int VERTICAL_VALUE_4_DIGITS_Y = VERTICAL_VALUE_3_DIGITS_Y;     // Same Y-c
 const int VERTICAL_VALUE_5_DIGITS_X = VERTICAL_VALUE_4_DIGITS_X - 4; // Shifted X-coordinate from the 4-digit label.
 const int VERTICAL_VALUE_5_DIGITS_Y = VERTICAL_VALUE_4_DIGITS_Y;     // Same Y-coordinate as the 4-digit label.
 
-const int VERTICAL_VALUE_X = 122;
+const int VERTICAL_VALUE_X = 110;
 const int VERTICAL_VALUE_Y = 20;
 
 // Coordinates for the vertical value label with 3 digits.
@@ -119,14 +119,14 @@ Layout DisplayLayout = {
     // ActiveLateralMode label settings: font ACTIVE_MODE_FONT, font size 16, position (ACTIVE_LATERAL_MODE_X, ACTIVE_LATERAL_MODE_Y).
     {ACTIVE_MODE_FONT, 16, {ACTIVE_LATERAL_MODE_X, ACTIVE_LATERAL_MODE_Y}},
     // ActiveVerticalMode label settings: font ACTIVE_MODE_FONT, font size 16, position (ACTIVE_VERTICAL_MODE_X, ACTIVE_LATERAL_MODE_Y).
-    {ACTIVE_MODE_FONT, 16, {ACTIVE_VERTICAL_MODE_X, ACTIVE_LATERAL_MODE_Y}},
+    {ACTIVE_MODE_FONT, 16, {ACTIVE_VERTICAL_MODE_X, ACTIVE_VERTICAL_MODE_Y}},
     {ACTIVE_MODE_FONT, 12, {VERTICAL_VALUE_3_DIGITS_X - 5, VERTICAL_VALUE_3_DIGITS_Y}},
     // Vertical3DigitsValue label settings: font ARMED_MODE_FONT, font size 12, position (VERTICAL_VALUE_3_DIGITS_X, VERTICAL_VALUE_3_DIGITS_Y).
     {ACTIVE_MODE_FONT, 12, {VERTICAL_VALUE_3_DIGITS_X, VERTICAL_VALUE_3_DIGITS_Y}},
     // Vertical4DigitsValue label settings: font ARMED_MODE_FONT, font size 12, position (VERTICAL_VALUE_4_DIGITS_X, VERTICAL_VALUE_4_DIGITS_Y).
     {ACTIVE_MODE_FONT, 12, {VERTICAL_VALUE_4_DIGITS_X, VERTICAL_VALUE_4_DIGITS_Y}},
     // Vertical5DigitsValue label settings: font ARMED_MODE_FONT, font size 12, position (VERTICAL_VALUE_4_DIGITS_X, VERTICAL_VALUE_4_DIGITS_Y).
-    {ACTIVE_MODE_FONT, 12, {VERTICAL_VALUE_X, VERTICAL_VALUE_Y}},
+    {ACTIVE_MODE_FONT, 16, {VERTICAL_VALUE_X, VERTICAL_VALUE_Y}},
     // ValueUnits label settings: font ARMED_MODE_FONT, font size 12, position (VERTICAL_VALUE_UNITS_X, VERTICAL_VALUE_UNITS_Y).
     {ARMED_MODE_FONT, 12, {VERTICAL_VALUE_UNITS_X, VERTICAL_VALUE_UNITS_Y}},
     // ArmedLateralMode label settings: font ARMED_MODE_FONT, font size 12, position (ARMED_LATERAL_MODE_X, ARMED_LATERAL_MODE_Y).
@@ -147,15 +147,15 @@ Position OffsetArmed = {
     5};
 
 Position Offset2Digits = {
-    14,
+    30,
     0};
 
 Position Offset3Digits = {
-    8,
+    20,
     0};
 
 Position Offset4Digits = {
-    2,
+    10,
     0};
 
 Position Offset5Digits = {
@@ -169,7 +169,7 @@ Position Offset4DigitsArrow{
     -8, 0};
 
 Position OffsetZero{
-    20, 0};
+    30, 0};
 
 GFC600::GFC600(uint8_t clk, uint8_t data, uint8_t cs, uint8_t dc, uint8_t reset)
 {
@@ -402,17 +402,17 @@ void GFC600::handleAltMode(Layout layout)
     // Check if the current altitude is positive.
     else if (curr_alt > 0) {
         char curr_alt_string[10];
-        sprintf(curr_alt_string, "%d", roundToClosestHundred(curr_alt)); // Rounding to closest hundred.
+        sprintf(curr_alt_string, "%d", curr_alt); // Rounding to closest hundred.
 
         // Display altitude value and handle different digit ranges.
         if (curr_alt <= MAX_3_DIGITS_VALUE) {
             _oledDisplay->setDrawColor(BLACK);
             _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 24, VERTICAL_VALUE_3_DIGITS_Y - 15, 18, 20);
-            _renderLabel(curr_alt_string, layout.Vertical3DigitsValue, NoOffset, false);
+            _renderLabel(curr_alt_string, layout.Vertical5DigitsValue, Offset3Digits, false);
         } else if (curr_alt <= MAX_4_DIGITS_VALUE) {
-            _renderLabel(curr_alt_string, layout.Vertical4DigitsValue, Offset4Digits, false);
-        } else if (curr_alt > MAX_4_DIGITS_VALUE) {
             _renderLabel(curr_alt_string, layout.Vertical5DigitsValue, Offset4Digits, false);
+        } else if (curr_alt > MAX_4_DIGITS_VALUE) {
+            _renderLabel(curr_alt_string, layout.Vertical5DigitsValue, Offset5Digits, false);
         }
     }
 }

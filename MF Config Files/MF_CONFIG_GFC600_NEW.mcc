@@ -241,7 +241,7 @@
       <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
         <source type="SimConnect" VarType="CODE" Value="(A:INDICATED ALTITUDE,Feet)" UUID="3110ef7c-3b03-4d05-99d6-fb582d3ac3f8" />
         <modifiers>
-          <transformation active="True" expression="(Round($,0))" substrStart="0" substrEnd="7" />
+          <transformation active="True" expression="Round($/100, 0)*100" substrStart="0" substrEnd="7" />
           <comparison active="False" value="if($%100)&lt;50" operand="=" ifValue="1" elseValue="0" />
         </modifiers>
         <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="18" value="$" />
