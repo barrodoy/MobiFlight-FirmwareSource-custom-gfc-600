@@ -77,6 +77,61 @@
       "id": 11,
       "label": "VS FPM Value",
       "description": "$ will send the value to the board"
+    },
+	
+				{
+      "id": 12,
+      "label": "IAS Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+	
+					{
+      "id": 13,
+      "label": "IAS KIAS Value",
+      "description": "$ will send the value to the board"
+    },
+	
+						{
+      "id": 14,
+      "label": "PIT Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+	
+	
+	{
+      "id": 15,
+      "label": "ALT Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+	
+								{
+      "id": 16,
+      "label": "ALT FT Value",
+      "description": "$ will send the value to the board"
+    },
+	
+	{
+      "id": 17,
+      "label": "ALTS Mode Selected",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+	
+	{
+      "id": 18,
+      "label": "Current Altitude",
+      "description": "$ will send the value to the board"
+    },
+	
+		{
+      "id": 19,
+      "label": "GS Armed",
+      "description": "0 -> Not Selected, 1 -> Selected"
+    },
+	
+			{
+      "id": 20,
+      "label": "GS Active",
+      "description": "0 -> Not Selected, 1 -> Selected"
     }
 	
 	

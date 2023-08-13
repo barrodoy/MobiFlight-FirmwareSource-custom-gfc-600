@@ -17,7 +17,7 @@
 #define LVL_MODE   2
 #define NAV_MODE   3
 #define HDG_MODE   4
-#define LOC_MODE   5
+#define HAS_LOC    5
 #define BC_MODE    6
 #define APP_MODE   7
 #define GPS_SOURCE 8
@@ -31,6 +31,8 @@
 #define ALT_VALUE  16
 #define ALTS_MODE  17
 #define CURR_ALT   18
+#define GS_ARM     19
+#define GS_ACTIVE  20
 
 struct Position {
     int x;

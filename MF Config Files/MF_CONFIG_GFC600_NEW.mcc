@@ -225,12 +225,12 @@
       <active>true</active>
       <description>Lateral: LOC Mode Selected</description>
       <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <source type="SimConnect" VarType="LVAR" Value="" />
+        <source type="SimConnect" VarType="CODE" Value="(A:NAV HAS LOCALIZER:1,Bool)" UUID="9c1ccb5a-cbf8-4570-af72-15e66acc352e" />
         <modifiers>
           <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
           <comparison active="False" value="" operand="" ifValue="" elseValue="" />
         </modifiers>
-        <display type="" serial="" pin="" pinBrightness="255" />
+        <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="5" value="$" />
         <preconditions />
         <configrefs />
       </settings>
@@ -264,7 +264,7 @@
       </settings>
     </config>
     <config guid="ccf1a760-5ab9-4bae-b45a-308537041f8d">
-      <active>false</active>
+      <active>true</active>
       <description>Vertical Rounded Current Altitude</description>
       <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
         <source type="SimConnect" VarType="LVAR" Value="" />
@@ -277,6 +277,34 @@
         <configrefs>
           <configref active="True" ref="e3060e3e-75c0-4c8b-96a5-dc4880c98d83" placeholder="#" />
         </configrefs>
+      </settings>
+    </config>
+    <config guid="ff79db61-5d74-4962-a65d-0a06113d8c3f">
+      <active>true</active>
+      <description>Vertical: GS Armed</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT GLIDESLOPE ARM,bool)" UUID="7412995d-21d9-419e-b80d-2e6c56afdb06" />
+        <modifiers>
+          <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
+          <comparison active="True" value="" operand="=" ifValue="1" elseValue="0" />
+        </modifiers>
+        <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="19" value="$" />
+        <preconditions />
+        <configrefs />
+      </settings>
+    </config>
+    <config guid="cc94fd06-adf2-42b7-b596-1e62ec339732">
+      <active>true</active>
+      <description>Vertical: GS Active</description>
+      <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <source type="SimConnect" VarType="CODE" Value="(A:AUTOPILOT GLIDESLOPE ACTIVE,bool)" UUID="4c7f4666-014f-4ae9-b9b8-f84ecce46cb8" />
+        <modifiers>
+          <transformation active="False" expression="$" substrStart="0" substrEnd="7" />
+          <comparison active="False" value="" operand="" ifValue="" elseValue="" />
+        </modifiers>
+        <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="20" value="$" />
+        <preconditions />
+        <configrefs />
       </settings>
     </config>
   </outputs>

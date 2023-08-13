@@ -21,12 +21,14 @@ bool rol_mode_selected          = false; // Flag indicating whether the roll mod
 bool lvl_mode_selected          = false; // Flag indicating whether the level mode is selected.
 bool nav_mode_selected          = false; // Flag indicating whether the NAV mode is selected.
 bool hdg_mode_selected          = false; // Flag indicating whether the heading mode is selected.
-bool loc_mode_selected          = false; // Flag indicating whether the localizer mode is selected.
+bool nav_has_loc                = false; // Flag indicating whether the localizer mode is selected.
 bool bc_mode_selected           = false; // Flag indicating whether the back-course mode is selected.
 bool app_mode_selected          = false; // Flag indicating whether the approach mode is selected.
 bool gps_source_selected        = false; // Flag indicating whether the GPS source is selected.
 bool needle_not_fully_deflected = false; // Flag indicating whether the needle is not fully deflected.
 bool alts_mode_selected         = false; // Flag indicating whether the altitude mode is selected.
+bool gs_mode_armed              = false;
+bool gs_mode_active             = false;
 
 // Vertical modes definitions:
 const int ACTIVE_VERTICAL_MODE_X = 56; // X-coordinate of the active vertical mode label.
@@ -134,7 +136,7 @@ Layout DisplayLayout = {
     // ArmedVerticalMode1 label settings: font ARMED_MODE_FONT, font size 12, position (ARMED_VERTICAL_MODE1_X, ARMED_VERTICAL_MODE1_Y).
     {ARMED_MODE_FONT, 12, {ARMED_VERTICAL_MODE1_X, ARMED_VERTICAL_MODE1_Y}},
     // ArmedVerticalMode2 label settings: font ARMED_MODE_FONT, font size 12, position (120, 18).
-    {ARMED_MODE_FONT, 12, {120, 18}},
+    {ARMED_MODE_FONT, 12, {144, 57}},
     // VsArrow label settings: font ARROW_FONT, font size 12, position (VERTICAL_ARROW_X, VERTICAL_ARROW_Y).
     {ARROW_FONT, ARROW_SIZE, {VERTICAL_ARROW_X, VERTICAL_ARROW_Y}}};
 
@@ -257,6 +259,10 @@ void GFC600::renderLateralMode(Layout layout)
         _renderLabel("VOR", layout.ArmedLateralMode, NoOffset, 0);
     }
 
+    else if (hdg_mode_selected) {
+        _renderLabel("HDG", layout.ActiveLateralMode, NoOffset, 0);
+    }
+
     // Both VOR navigation and GPS source are on. Display "GPS" label
     else if (nav_mode_selected && gps_source_selected) {
         _renderLabel("GPS", layout.ActiveLateralMode, NoOffset, 0);
@@ -264,8 +270,13 @@ void GFC600::renderLateralMode(Layout layout)
     }
 
     // VOR navigation is on, but GPS source is off. Display "VOR" label
-    else if (nav_mode_selected && !gps_source_selected) {
+    else if (nav_mode_selected && !gps_source_selected && !nav_has_loc) {
         _renderLabel("VOR", layout.ActiveLateralMode, NoOffset, 0);
+        _renderLabel(CLEAR_STRING, layout.ArmedLateralMode, NoOffset, 0);
+    }
+
+    else if (nav_mode_selected && !gps_source_selected && nav_has_loc) {
+        _renderLabel("LOC", layout.ActiveLateralMode, NoOffset, 0);
         _renderLabel(CLEAR_STRING, layout.ArmedLateralMode, NoOffset, 0);
     }
 
@@ -273,6 +284,10 @@ void GFC600::renderLateralMode(Layout layout)
     else if (lvl_mode_selected) {
         _renderLabel("LVL", layout.ActiveLateralMode, NoOffset, 0);
         _renderLabel(CLEAR_STRING, layout.ArmedLateralMode, NoOffset, 0);
+    }
+
+    if (app_mode_selected && (hdg_mode_selected || rol_mode_selected)) {
+        _renderLabel("LOC", layout.ArmedLateralMode, NoOffset, 0);
     }
 
     // If none of the above conditions match, there is no active lateral mode. You can add a default label here if needed.
@@ -451,6 +466,11 @@ void GFC600::renderVerticalMode(Layout layout)
         _renderLabel("PIT", layout.ActiveVerticalMode, NoOffset, false);
         _renderLabel("ALTS", layout.ArmedVerticalMode1, NoOffset, false);
     }
+
+    // Armed vertical mode2
+    if (app_mode_selected && gs_mode_armed) {
+        _renderLabel("GS", layout.ArmedVerticalMode2, NoOffset, false);
+    }
 }
 
 void GFC600::set(uint8_t messageID, const char *data)
@@ -498,11 +518,11 @@ void GFC600::set(uint8_t messageID, const char *data)
         break;
 
         // Check if LOC is active
-    case LOC_MODE:
+    case HAS_LOC:
 
-        loc_mode_selected = atoi(data);
+        nav_has_loc = atoi(data);
         cmdMessenger.sendCmd(kDebug, "LOC value: ");
-        cmdMessenger.sendCmd(kDebug, loc_mode_selected);
+        cmdMessenger.sendCmd(kDebug, nav_has_loc);
         break;
 
         // Check if BC is active
@@ -599,6 +619,20 @@ void GFC600::set(uint8_t messageID, const char *data)
         curr_alt = atoi(data);
         cmdMessenger.sendCmd(kDebug, "Current Altitude value: ");
         cmdMessenger.sendCmd(kDebug, curr_alt);
+        break;
+
+    case GS_ARM:
+        // Implement the logic for setting Active VAPP Mode
+        gs_mode_armed = atoi(data);
+        cmdMessenger.sendCmd(kDebug, "GS Armed value: ");
+        cmdMessenger.sendCmd(kDebug, gs_mode_armed);
+        break;
+
+    case GS_ACTIVE:
+        // Implement the logic for setting Active VAPP Mode
+        gs_mode_active = atoi(data);
+        cmdMessenger.sendCmd(kDebug, "GS Active value: ");
+        cmdMessenger.sendCmd(kDebug, gs_mode_active);
         break;
 
     default:
