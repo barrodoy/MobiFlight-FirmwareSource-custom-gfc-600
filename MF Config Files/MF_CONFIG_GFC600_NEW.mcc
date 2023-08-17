@@ -7,7 +7,7 @@
       <settings msdata:InstanceType="MobiFlight.OutputConfigItem, MFConnector, Version=0.0.0.468, Culture=neutral, PublicKeyToken=null" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
         <source type="Variable" varType="number" varName="ROL Mode" varExpression="$" />
         <modifiers>
-          <transformation active="True" expression="!(# || ? || % || @ || *)" substrStart="0" substrEnd="7" />
+          <transformation active="True" expression="!(# || ? || % || @ || * || &amp;)" substrStart="0" substrEnd="7" />
           <comparison active="True" value="True" operand="=" ifValue="1" elseValue="0" />
         </modifiers>
         <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="1" value="$" />
@@ -18,6 +18,7 @@
           <configref active="True" ref="efa11cef-a1a8-4db1-a957-c7d5fc47dda2" placeholder="%" />
           <configref active="True" ref="79928f21-4b3d-4710-b7ae-9df39f517b00" placeholder="@" />
           <configref active="True" ref="a3144009-6ba5-48d5-8896-dbbae916fc53" placeholder="*" />
+          <configref active="True" ref="79928f21-4b3d-4710-b7ae-9df39f517b00" placeholder="&amp;" />
         </configrefs>
       </settings>
     </config>
@@ -212,7 +213,7 @@
           <transformation active="True" expression="?+!+#" substrStart="0" substrEnd="7" />
           <comparison active="False" value="" operand="" ifValue="" elseValue="" />
         </modifiers>
-        <display type="-" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" pin="" pinBrightness="255" />
+        <display type="CustomDevice" serial="MobiFlight Mega/ SN-e85-581" trigger="normal" customType="" customName="Garmin GFC 600" messageType="17" value="$" />
         <preconditions />
         <configrefs>
           <configref active="True" ref="1cee48e6-fe30-44e8-97ce-b877d0f1bd40" placeholder="#" />

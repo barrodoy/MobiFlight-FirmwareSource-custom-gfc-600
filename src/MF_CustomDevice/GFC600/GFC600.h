@@ -12,27 +12,52 @@
 #define BLACK 0
 #define WHITE 1
 
-#define PFT        0
-#define ROL_MODE   1
-#define LVL_MODE   2
-#define NAV_MODE   3
-#define HDG_MODE   4
-#define HAS_LOC    5
-#define BC_MODE    6
-#define APP_MODE   7
-#define GPS_SOURCE 8
-#define NEEDLE     9
-#define VS_MODE    10
-#define VS_VALUE   11
-#define IAS_MODE   12
-#define IAS_VALUE  13
-#define PIT_MODE   14
-#define ALT_MODE   15
-#define ALT_VALUE  16
-#define ALTS_MODE  17
-#define CURR_ALT   18
-#define GS_ARM     19
-#define GS_ACTIVE  20
+enum Messages {
+    PFT = 0,
+    ROL_MODE,
+    LVL_MODE,
+    NAV_MODE,
+    HDG_MODE,
+    HAS_LOC,
+    BC_MODE,
+    APP_MODE,
+    GPS_SOURCE,
+    NEEDLE,
+    VS_MODE,
+    VS_VALUE,
+    IAS_MODE,
+    IAS_VALUE,
+    PIT_MODE,
+    ALT_MODE,
+    ALT_VALUE,
+    ALTS_MODE,
+    CURR_ALT,
+    GS_ARM,
+    GS_ACTIVE
+};
+
+enum LateralMode {
+    NONE_LAT,
+    ROL,
+    HDG,
+    LOC,
+    VOR,
+    GPS,
+    LVL_LAT,
+    BC,
+    // Add more states as needed
+};
+
+enum VerticalMode {
+    NONE_VERT,
+    VS,
+    ALT,
+    ALTS,
+    LVL_VERT,
+    IAS,
+    PIT,
+    GS,
+};
 
 struct Position {
     int x;
@@ -46,8 +71,8 @@ struct Label {
 };
 
 struct Layout {
-    Label ActiveLateralMode;    // Label for the active lateral mode display.
-    Label ActiveVerticalMode;   // Label for the active vertical mode display.
+    Label ActiveLateralMode;  // Label for the active lateral mode display.
+    Label ActiveVerticalMode; // Label for the active vertical mode display.
     Label Vertical2DigitsValue;
     Label Vertical3DigitsValue; // Label for the vertical value display with 3 digits.
     Label Vertical4DigitsValue; // Label for the vertical value display with 4 digits.
@@ -87,12 +112,15 @@ private:
     void _stop();
     void _renderLabel(const char *text, Label label, Position offset, bool update = false);
     void drawLine(Line line);
-    void renderLateralMode(Layout layout);
-    void renderVerticalMode(Layout layout);
+    void renderLateralMode(Layout layout, LateralMode activeMode, LateralMode armedMode);
+    void renderVerticalMode(Layout layout, VerticalMode activeMode, VerticalMode armedMode1, VerticalMode armedMode2);
     void renderSymbols(const char *arrow, Label label, Position offset, bool update);
     void handleVerticalSpeedMode(Layout layout);
     void handleAltMode(Layout layout);
     void handleIasMode(Layout layout);
     void clearArea(int start_x, int start_y, int end_x, int end_y);
     int  roundToClosestHundred(int value);
+    void decideLateralModes();
+    void decideVerticalModes();
+    void flashAlts(Label label, Position offset, bool update);
 };
