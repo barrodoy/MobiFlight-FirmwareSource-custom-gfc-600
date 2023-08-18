@@ -35,6 +35,9 @@ const int ACTIVE_VERTICAL_MODE_Y = 20; // Y-coordinate of the active vertical mo
 const int ARMED_VERTICAL_MODE1_X = 56; // X-coordinate of the first armed vertical mode label.
 const int ARMED_VERTICAL_MODE1_Y = 57; // Y-coordinate of the first armed vertical mode label.
 
+const int ARMED_VERTICAL_MODE2_X = 146; // X-coordinate of the first armed vertical mode label.
+const int ARMED_VERTICAL_MODE2_Y = 57;  // Y-coordinate of the first armed vertical mode label.
+
 // Coordinates for the vertical value label with 3 digits.
 const int VERTICAL_VALUE_3_DIGITS_X = 130; // X-coordinate on the GUI.
 const int VERTICAL_VALUE_3_DIGITS_Y = 20;  // Y-coordinate on the GUI.
@@ -87,6 +90,8 @@ bool gs_mode_active = false;
 bool alts_mode_armed  = false; // Flag indicating whether the altitude mode is selected.
 bool alts_mode_active = false;
 
+bool alts_flash_trigger = true;
+
 // Common modes definitions:
 
 const uint8_t *ACTIVE_MODE_FONT = u8g2_font_logisoso16_tr;  // Font used for the active mode labels.
@@ -121,32 +126,26 @@ Line RightLine = {
     {162, 57}  // EndPos
 };
 
-// Define an instance of the Layout struct named DisplayLayout and initialize its members.
 Layout DisplayLayout = {
     // ActiveLateralMode label settings: font ACTIVE_mode_FONT, font size 16, position (ACTIVE_LATERAL_mode_X, ACTIVE_LATERAL_mode_Y).
-    {ACTIVE_MODE_FONT, 16, {ACTIVE_LATERAL_MODE_X, ACTIVE_LATERAL_MODE_Y}},
+    {ACTIVE_MODE_FONT, 16, ACTIVE_LATERAL_MODE_X, ACTIVE_LATERAL_MODE_Y},
     // ActiveVerticalMode label settings: font ACTIVE_mode_FONT, font size 16, position (ACTIVE_VERTICAL_mode_X, ACTIVE_LATERAL_mode_Y).
-    {ACTIVE_MODE_FONT, 16, {ACTIVE_VERTICAL_MODE_X, ACTIVE_VERTICAL_MODE_Y}},
-    {ACTIVE_MODE_FONT, 12, {VERTICAL_VALUE_3_DIGITS_X - 5, VERTICAL_VALUE_3_DIGITS_Y}},
-    // Vertical3DigitsValue label settings: font ARMED_mode_FONT, font size 12, position (VERTICAL_VALUE_3_DIGITS_X, VERTICAL_VALUE_3_DIGITS_Y).
-    {ACTIVE_MODE_FONT, 12, {VERTICAL_VALUE_3_DIGITS_X, VERTICAL_VALUE_3_DIGITS_Y}},
-    // Vertical4DigitsValue label settings: font ARMED_mode_FONT, font size 12, position (VERTICAL_VALUE_4_DIGITS_X, VERTICAL_VALUE_4_DIGITS_Y).
-    {ACTIVE_MODE_FONT, 12, {VERTICAL_VALUE_4_DIGITS_X, VERTICAL_VALUE_4_DIGITS_Y}},
-    // Vertical5DigitsValue label settings: font ARMED_mode_FONT, font size 12, position (VERTICAL_VALUE_4_DIGITS_X, VERTICAL_VALUE_4_DIGITS_Y).
-    {ACTIVE_MODE_FONT, 16, {VERTICAL_VALUE_X, VERTICAL_VALUE_Y}},
+    {ACTIVE_MODE_FONT, 16, ACTIVE_VERTICAL_MODE_X, ACTIVE_VERTICAL_MODE_Y},
+    // VerticalDigitsValue label settings: font ACTIVE_mode_FONT, font size 16, position (VERTICAL_VALUE_X, VERTICAL_VALUE_Y).
+    {ACTIVE_MODE_FONT, 16, VERTICAL_VALUE_X, VERTICAL_VALUE_Y},
     // ValueUnits label settings: font ARMED_mode_FONT, font size 12, position (VERTICAL_VALUE_UNITS_X, VERTICAL_VALUE_UNITS_Y).
-    {ARMED_MODE_FONT, 12, {VERTICAL_VALUE_UNITS_X, VERTICAL_VALUE_UNITS_Y}},
+    {ARMED_MODE_FONT, 12, VERTICAL_VALUE_UNITS_X, VERTICAL_VALUE_UNITS_Y},
     // ArmedLateralMode label settings: font ARMED_mode_FONT, font size 12, position (ARMED_LATERAL_mode_X, ARMED_LATERAL_mode_Y).
-    {ARMED_MODE_FONT, 12, {ARMED_LATERAL_MODE_X, ARMED_LATERAL_MODE_Y}},
+    {ARMED_MODE_FONT, 12, ARMED_LATERAL_MODE_X, ARMED_LATERAL_MODE_Y},
     // ArmedVerticalMode1 label settings: font ARMED_mode_FONT, font size 12, position (ARMED_VERTICAL_MODE1_X, ARMED_VERTICAL_MODE1_Y).
-    {ARMED_MODE_FONT, 12, {ARMED_VERTICAL_MODE1_X, ARMED_VERTICAL_MODE1_Y}},
-    // ArmedVerticalMode2 label settings: font ARMED_mode_FONT, font size 12, position (120, 18).
-    {ARMED_MODE_FONT, 12, {146, 57}},
-    // VsArrow label settings: font ARROW_FONT, font size 12, position (VERTICAL_ARROW_X, VERTICAL_ARROW_Y).
-    {ARROW_FONT, ARROW_SIZE, {VERTICAL_ARROW_X, VERTICAL_ARROW_Y}}};
+    {ARMED_MODE_FONT, 12, ARMED_VERTICAL_MODE1_X, ARMED_VERTICAL_MODE1_Y},
+    // ArmedVerticalMode2 label settings: font ARMED_mode_FONT, font size 12, position (146, 57).
+    {ARMED_MODE_FONT, 12, ARMED_VERTICAL_MODE2_X, ARMED_VERTICAL_MODE2_Y},
+    // VsArrow label settings: font ARROW_FONT, font size ARROW_SIZE, position (VERTICAL_ARROW_X, VERTICAL_ARROW_Y).
+    {ARROW_FONT, ARROW_SIZE, VERTICAL_ARROW_X, VERTICAL_ARROW_Y}};
 
-Position OffsetActive = {
-    0,
+Position Offset2LettersArmed = {
+    6,
     0};
 
 Position OffsetArmed = {
@@ -380,80 +379,6 @@ void GFC600::renderLateralMode(Layout layout, LateralMode activeMode, LateralMod
 }
 
 /**
- * @brief Renders the lateral mode label based on the current mode Modes.
- * @param layout The layout to render the active lateral mode label on.
- */
-/*
-void GFC600::renderLateralMode(Layout layout)
-{
-    // Check and render each active lateral mode based on the boolean variables
-
-    // ROL mode is active (when all other later modes are off), display "ROL" label
-    if (rol_mode_selected) {
-        _renderLabel("ROL", layout.ActiveLateralMode, NoOffset, 0);
-        _renderLabel(CLEAR_STRING, layout.ArmedLateralMode, NoOffset, 0);
-    }
-
-    // Heading mode is active, but navigation is off. Therefore, HDG mode is the active mode. Display "HDG" label
-    else if (hdg_mode_selected && !nav_mode_selected) {
-        _renderLabel("HDG", layout.ActiveLateralMode, NoOffset, 0);
-        _renderLabel(CLEAR_STRING, layout.ArmedLateralMode, NoOffset, 0);
-    }
-
-    // Heading is active, nav is armed and gps source is off
-    else if (hdg_mode_selected && nav_mode_selected && !gps_source_selected) {
-        _renderLabel("HDG", layout.ActiveLateralMode, NoOffset, 0);
-        _renderLabel("VOR", layout.ArmedLateralMode, NoOffset, 0);
-    }
-
-    // Heading is active, nav is armed and gps source is on
-    else if (hdg_mode_selected && nav_mode_selected && gps_source_selected) {
-        _renderLabel("HDG", layout.ActiveLateralMode, NoOffset, 0);
-        _renderLabel("GPS", layout.ArmedLateralMode, NoOffset, 0);
-    }
-
-    // Only heading mode is selected, no armed mode
-    else if (hdg_mode_selected) {
-        _renderLabel("HDG", layout.ActiveLateralMode, NoOffset, 0);
-    }
-
-    // Both VOR navigation and GPS source are on. Display "GPS" label
-    else if (nav_mode_selected && gps_source_selected) {
-        _renderLabel("GPS", layout.ActiveLateralMode, NoOffset, 0);
-        _renderLabel(CLEAR_STRING, layout.ArmedLateralMode, NoOffset, 0);
-    }
-
-    // VOR navigation is on, but GPS source is off. Display "VOR" label
-    else if (nav_mode_selected && !gps_source_selected && !nav_has_loc) {
-        _renderLabel("VOR", layout.ActiveLateralMode, NoOffset, 0);
-        _renderLabel(CLEAR_STRING, layout.ArmedLateralMode, NoOffset, 0);
-    }
-
-    // Nav is ON, no GPS Source and LOC is available
-    else if (nav_mode_selected && !gps_source_selected && nav_has_loc) {
-        _renderLabel("LOC", layout.ActiveLateralMode, NoOffset, 0);
-        _renderLabel(CLEAR_STRING, layout.ArmedLateralMode, NoOffset, 0);
-    }
-
-    // Display "LVL" label if LVL mode is active
-    else if (lvl_mode_selected) {
-        _renderLabel("LVL", layout.ActiveLateralMode, NoOffset, 0);
-        _renderLabel(CLEAR_STRING, layout.ArmedLateralMode, NoOffset, 0);
-    }
-
-    if (app_mode_selected && (hdg_mode_selected || rol_mode_selected)) {
-        _renderLabel("LOC", layout.ArmedLateralMode, NoOffset, 0);
-    }
-
-    // If none of the above conditions match, there is no active lateral mode. You can add a default label here if needed.
-
-    // Add more conditions as per your specific requirements
-
-    // If none of the above conditions match and no default label is set, no label will be rendered for the active lateral mode.
-}
-*/
-
-/**
  * Handle the display of the Vertical Speed mode on the OLED display.
  * This function updates the OLED display to show the current vertical speed information.
  *
@@ -472,7 +397,7 @@ void GFC600::handleVerticalSpeedMode(Layout layout)
         // If the vertical speed is zero, display "0" without an arrow symbol.
         _oledDisplay->setDrawColor(BLACK);
         _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 16, VERTICAL_VALUE_3_DIGITS_Y - 20, 36, 20);
-        _renderLabel("0", layout.Vertical5DigitsValue, OffsetZero, false);
+        _renderLabel("0", layout.VerticalDigitsValue, OffsetZero, false);
     }
 
     // Check if the vertical speed is positive.
@@ -485,13 +410,13 @@ void GFC600::handleVerticalSpeedMode(Layout layout)
             _oledDisplay->setDrawColor(BLACK);
             _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 24, VERTICAL_VALUE_3_DIGITS_Y - 15, 18, 20);
             renderSymbols(UP_ARROW, layout.VsArrow, NoOffset, false);
-            _renderLabel(vs_fpm_string, layout.Vertical5DigitsValue, Offset3Digits, false);
+            _renderLabel(vs_fpm_string, layout.VerticalDigitsValue, Offset3Digits, false);
         }
 
         // If the vertical speed is larger than a 3-digit value, display it with a 4-digit layout.
         else {
             renderSymbols(UP_ARROW, layout.VsArrow, Offset4DigitsArrow, false);
-            _renderLabel(vs_fpm_string, layout.Vertical5DigitsValue, Offset4Digits, false);
+            _renderLabel(vs_fpm_string, layout.VerticalDigitsValue, Offset4Digits, false);
         }
     }
 
@@ -505,13 +430,13 @@ void GFC600::handleVerticalSpeedMode(Layout layout)
             _oledDisplay->setDrawColor(BLACK);
             _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 24, VERTICAL_VALUE_3_DIGITS_Y - 15, 18, 20);
             renderSymbols(DOWN_ARROW, layout.VsArrow, NoOffset, false);
-            _renderLabel(vs_fpm_string, layout.Vertical5DigitsValue, Offset3Digits, false);
+            _renderLabel(vs_fpm_string, layout.VerticalDigitsValue, Offset3Digits, false);
         }
 
         // If the vertical speed is larger than a 3-digit value, display it with a 4-digit layout.
         else {
             renderSymbols(DOWN_ARROW, layout.VsArrow, Offset4DigitsArrow, false);
-            _renderLabel(vs_fpm_string, layout.Vertical5DigitsValue, Offset4Digits, false);
+            _renderLabel(vs_fpm_string, layout.VerticalDigitsValue, Offset4Digits, false);
         }
     }
 }
@@ -531,7 +456,7 @@ void GFC600::handleIasMode(Layout layout)
     // Check if the indicated airspeed (IAS) is zero.
     if (ias_kts_value == 0) {
         // Display "0" without an arrow symbol.
-        _renderLabel("0", layout.Vertical5DigitsValue, OffsetZero, false);
+        _renderLabel("0", layout.VerticalDigitsValue, OffsetZero, false);
     }
 
     // Check if the indicated airspeed (IAS) is positive.
@@ -541,12 +466,12 @@ void GFC600::handleIasMode(Layout layout)
 
         // If IAS is within 2 digits, display it with an up arrow symbol.
         if (ias_kts_value <= MAX_2_DIGITS_VALUE) {
-            _renderLabel(ias_kts_string, layout.Vertical5DigitsValue, Offset2Digits, false);
+            _renderLabel(ias_kts_string, layout.VerticalDigitsValue, Offset2Digits, false);
         }
 
         // If IAS is larger than 2 digits, display it using 3 digits layout.
         else {
-            _renderLabel(ias_kts_string, layout.Vertical5DigitsValue, Offset3Digits, false);
+            _renderLabel(ias_kts_string, layout.VerticalDigitsValue, Offset3Digits, false);
         }
     }
 }
@@ -558,32 +483,18 @@ void GFC600::handleIasMode(Layout layout)
  */
 void GFC600::handleAltMode(Layout layout)
 {
-    // Render labels for the active vertical mode and units (e.g., "ALT", "FT").
     _renderLabel("ALT", layout.ActiveVerticalMode, NoOffset, false);
-    _renderLabel("FT", layout.ValueUnits, NoOffset, false);
+    _renderLabel("FT", layout.ValueUnits, Offset2LettersArmed, false);
 
-    // Check if the current altitude is zero.
     if (curr_alt == 0) {
-        // Display "0" without an arrow symbol.
-        _oledDisplay->setDrawColor(BLACK);
-        _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 16, VERTICAL_VALUE_3_DIGITS_Y - 20, 36, 20);
-        _renderLabel("0", layout.Vertical5DigitsValue, OffsetZero, false);
-    }
-
-    // Check if the current altitude is positive.
-    else if (curr_alt > 0) {
-        char curr_alt_string[10];
-        sprintf(curr_alt_string, "%d", curr_alt); // Rounding to closest hundred.
-
-        // Display altitude value and handle different digit ranges.
+        _displayZeroAltitude(layout);
+    } else if (curr_alt > 0) {
         if (curr_alt <= MAX_3_DIGITS_VALUE) {
-            _oledDisplay->setDrawColor(BLACK);
-            _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 24, VERTICAL_VALUE_3_DIGITS_Y - 15, 18, 20);
-            _renderLabel(curr_alt_string, layout.Vertical5DigitsValue, Offset3Digits, false);
+            _display3DigitAltitude(curr_alt, layout);
         } else if (curr_alt <= MAX_4_DIGITS_VALUE) {
-            _renderLabel(curr_alt_string, layout.Vertical5DigitsValue, Offset4Digits, false);
+            _display4DigitAltitude(curr_alt, layout);
         } else if (curr_alt > MAX_4_DIGITS_VALUE) {
-            _renderLabel(curr_alt_string, layout.Vertical5DigitsValue, Offset5Digits, false);
+            _display5DigitAltitude(curr_alt, layout);
         }
     }
 }
@@ -614,6 +525,7 @@ void GFC600::decideVerticalModes()
             activeMode = VS;
             armedMode1 = ALTS;
             armedMode2 = GS;
+
         }
 
         else {
@@ -630,6 +542,7 @@ void GFC600::decideVerticalModes()
             activeMode = IAS;
             armedMode1 = ALTS;
             armedMode2 = GS;
+
         }
 
         else {
@@ -646,6 +559,7 @@ void GFC600::decideVerticalModes()
             activeMode = PIT;
             armedMode1 = ALTS;
             armedMode2 = GS;
+
         }
 
         else {
@@ -656,12 +570,21 @@ void GFC600::decideVerticalModes()
 
     }
 
-    else if (alt_mode_selected && !alts_mode_active) {
+    else if (alt_mode_selected) {
 
-        if (gs_mode_armed) {
+        // alts mode can only be active in MSFS if alt mode is active
+        if (alts_mode_active) {
+            alts_mode_active = isAltsModeActive(curr_alt, alt_ft_value);
+            activeMode       = ALTS;
+            armedMode1       = ALT;
+            armedMode2       = NONE_VERT;
+        }
+
+        else if (gs_mode_armed) {
             activeMode = ALT;
             armedMode1 = NONE_VERT;
             armedMode2 = GS;
+
         } else {
             activeMode = ALT;
             armedMode1 = NONE_VERT;
@@ -677,12 +600,23 @@ void GFC600::decideVerticalModes()
         }
     }
 
+    if (alts_mode_armed) {
+        cmdMessenger.sendCmd(kDebug, "ALTS MODE IS ARMED");
+        alts_mode_active = isAltsModeActive(curr_alt, alt_ft_value);
+        cmdMessenger.sendCmd(kDebug, "ALTS MODE:");
+        cmdMessenger.sendCmd(kDebug, alts_mode_active);
+        alts_flash_trigger = true;
+        cmdMessenger.sendCmd(kDebug, "FLASH TRIGGER:");
+        cmdMessenger.sendCmd(kDebug, alts_flash_trigger);
+    }
+
     /*else if (alts_mode_armed && abs(alt_ft_value - curr_alt >= 400)) {
         activeMode = ALTS;
         armedMode1 = ALT;
         armedMode2 = NONE_VERT;
     }*/
 
+    // handleAltsMode(DisplayLayout);
     renderVerticalMode(DisplayLayout, activeMode, armedMode1, armedMode2);
 }
 
@@ -725,7 +659,7 @@ void GFC600::renderVerticalMode(Layout layout, VerticalMode activeMode, Vertical
         break;
 
     case ALTS:
-        flashAlts(layout.ActiveVerticalMode, NoOffset, true);
+        handleAltsMode(layout);
         break;
 
     default:
@@ -758,41 +692,6 @@ void GFC600::renderVerticalMode(Layout layout, VerticalMode activeMode, Vertical
     }
 }
 
-/*void GFC600::renderVerticalModess(Layout layout)
-{
-
-    if (lvl_mode_selected) {
-        clearArea(LeftLine.StartPos.x + SPACING_FROM_LINES - 2, DISPLAY_START_Y, RightLine.StartPos.x - LeftLine.StartPos.x - SPACING_FROM_LINES - 1, DISPLAY_END_Y);
-        _renderLabel("LVL", layout.ActiveVerticalMode, NoOffset, false);
-    }
-
-    else if (vs_mode_selected) {
-        clearArea(LeftLine.StartPos.x + SPACING_FROM_LINES - 2, DISPLAY_START_Y, RightLine.StartPos.x - LeftLine.StartPos.x - SPACING_FROM_LINES - 1, DISPLAY_END_Y);
-        handleVerticalSpeedMode(layout);
-    }
-
-    else if (alt_mode_selected) {
-        clearArea(LeftLine.StartPos.x + SPACING_FROM_LINES - 2, DISPLAY_START_Y, RightLine.StartPos.x - LeftLine.StartPos.x - SPACING_FROM_LINES - 1, DISPLAY_END_Y);
-        handleAltMode(layout);
-    }
-
-    else if (ias_mode_selected) {
-        clearArea(LeftLine.StartPos.x + SPACING_FROM_LINES - 2, DISPLAY_START_Y, RightLine.StartPos.x - LeftLine.StartPos.x - SPACING_FROM_LINES - 1, DISPLAY_END_Y);
-        handleIasMode(layout);
-    }
-
-    else if (pit_mode_selected) {
-        clearArea(LeftLine.StartPos.x + SPACING_FROM_LINES - 2, DISPLAY_START_Y, RightLine.StartPos.x - LeftLine.StartPos.x - SPACING_FROM_LINES - 1, DISPLAY_END_Y);
-        _renderLabel("PIT", layout.ActiveVerticalMode, NoOffset, false);
-        _renderLabel("ALTS", layout.ArmedVerticalMode1, NoOffset, false);
-    }
-
-    // Armed vertical mode2
-    if (app_mode_selected && gs_mode_armed) {
-        _renderLabel("GS", layout.ArmedVerticalMode2, NoOffset, false);
-    }
-}*/
-
 void GFC600::set(uint8_t messageID, const char *data)
 {
     /* **********************************************************************************
@@ -808,16 +707,16 @@ void GFC600::set(uint8_t messageID, const char *data)
         // Check if ROL is active
     case ROL_MODE:
         rol_mode_selected = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "ROL value: ");
-        cmdMessenger.sendCmd(kDebug, rol_mode_selected);
+        /*cmdMessenger.sendCmd(kDebug, "ROL value: ");
+        cmdMessenger.sendCmd(kDebug, rol_mode_selected);*/
         break;
 
         // Check if LVL is active
     case LVL_MODE:
 
         lvl_mode_selected = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "LVL value: ");
-        cmdMessenger.sendCmd(kDebug, lvl_mode_selected);
+        /*cmdMessenger.sendCmd(kDebug, "LVL value: ");
+        cmdMessenger.sendCmd(kDebug, lvl_mode_selected);*/
         break;
 
         // Check if HDG is active
@@ -825,134 +724,134 @@ void GFC600::set(uint8_t messageID, const char *data)
 
         hdg_mode_selected = atoi(data);
 
-        cmdMessenger.sendCmd(kDebug, "HDG value: ");
-        cmdMessenger.sendCmd(kDebug, hdg_mode_selected);
+        /*cmdMessenger.sendCmd(kDebug, "HDG value: ");
+        cmdMessenger.sendCmd(kDebug, hdg_mode_selected);*/
         break;
 
         // Check if VOR is active
     case NAV_MODE:
 
         nav_mode_selected = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "VOR value: ");
-        cmdMessenger.sendCmd(kDebug, nav_mode_selected);
+        /*cmdMessenger.sendCmd(kDebug, "VOR value: ");
+        cmdMessenger.sendCmd(kDebug, nav_mode_selected);*/
         break;
 
         // Check if LOC is active
     case HAS_LOC:
 
         nav_has_loc = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "LOC value: ");
-        cmdMessenger.sendCmd(kDebug, nav_has_loc);
+        /*cmdMessenger.sendCmd(kDebug, "LOC value: ");
+        cmdMessenger.sendCmd(kDebug, nav_has_loc);*/
         break;
 
         // Check if BC is active
     case BC_MODE:
 
         bc_mode_selected = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "BC value: ");
-        cmdMessenger.sendCmd(kDebug, bc_mode_selected);
+        /*cmdMessenger.sendCmd(kDebug, "BC value: ");
+        cmdMessenger.sendCmd(kDebug, bc_mode_selected);*/
         break;
 
         // Check if APP is active
     case APP_MODE:
 
         app_mode_selected = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "APP value: ");
-        cmdMessenger.sendCmd(kDebug, app_mode_selected);
+        /*cmdMessenger.sendCmd(kDebug, "APP value: ");
+        cmdMessenger.sendCmd(kDebug, app_mode_selected);*/
         break;
 
         // Check if GPS Source is active
     case GPS_SOURCE:
 
         gps_source_selected = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "GPS value: ");
-        cmdMessenger.sendCmd(kDebug, gps_source_selected);
+        /*cmdMessenger.sendCmd(kDebug, "GPS value: ");
+        cmdMessenger.sendCmd(kDebug, gps_source_selected);*/
         break;
 
         // Check if needle is not fully deflected
     case NEEDLE:
 
         needle_not_fully_deflected = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "Needle value: ");
-        cmdMessenger.sendCmd(kDebug, needle_not_fully_deflected);
+        /*cmdMessenger.sendCmd(kDebug, "Needle value: ");
+        cmdMessenger.sendCmd(kDebug, needle_not_fully_deflected);*/
         break;
 
         // Check if VS mode is selected
     case VS_MODE:
 
         vs_mode_selected = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "VS Mode value: ");
-        cmdMessenger.sendCmd(kDebug, vs_mode_selected);
+        /*cmdMessenger.sendCmd(kDebug, "VS Mode value: ");
+        cmdMessenger.sendCmd(kDebug, vs_mode_selected);*/
         break;
 
     case VS_VALUE:
         // Implement the logic for setting Active VAPP Mode
         vs_fpm_value = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "VS FPM value: ");
-        cmdMessenger.sendCmd(kDebug, vs_fpm_value);
+        /*cmdMessenger.sendCmd(kDebug, "VS FPM value: ");
+        cmdMessenger.sendCmd(kDebug, vs_fpm_value);*/
         break;
 
     case IAS_MODE:
         // Implement the logic for setting Active VAPP Mode
         ias_mode_selected = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "IAS mode value: ");
-        cmdMessenger.sendCmd(kDebug, ias_mode_selected);
+        /*cmdMessenger.sendCmd(kDebug, "IAS mode value: ");
+        cmdMessenger.sendCmd(kDebug, ias_mode_selected);*/
         break;
 
     case IAS_VALUE:
         // Implement the logic for setting Active VAPP Mode
         ias_kts_value = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "IAS KIAS value: ");
-        cmdMessenger.sendCmd(kDebug, ias_kts_value);
+        /*cmdMessenger.sendCmd(kDebug, "IAS KIAS value: ");
+        cmdMessenger.sendCmd(kDebug, ias_kts_value);*/
         break;
 
     case PIT_MODE:
         // Implement the logic for setting Active VAPP Mode
         pit_mode_selected = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "Pit Mode value: ");
-        cmdMessenger.sendCmd(kDebug, pit_mode_selected);
+        /*cmdMessenger.sendCmd(kDebug, "Pit Mode value: ");
+        cmdMessenger.sendCmd(kDebug, pit_mode_selected);*/
         break;
 
     case ALT_MODE:
         // Implement the logic for setting Active VAPP Mode
         alt_mode_selected = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "Alt Mode value: ");
-        cmdMessenger.sendCmd(kDebug, alt_mode_selected);
+        /*cmdMessenger.sendCmd(kDebug, "Alt Mode value: ");
+        cmdMessenger.sendCmd(kDebug, alt_mode_selected);*/
         break;
 
     case ALT_VALUE:
         // Implement the logic for setting Active VAPP Mode
         alt_ft_value = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "Alt ft value: ");
-        cmdMessenger.sendCmd(kDebug, alt_ft_value);
+        /*cmdMessenger.sendCmd(kDebug, "Alt ft value: ");
+        cmdMessenger.sendCmd(kDebug, alt_ft_value);*/
         break;
 
     case ALTS_MODE:
         // Implement the logic for setting Active VAPP Mode
         alts_mode_armed = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "ALTS Mode value: ");
-        cmdMessenger.sendCmd(kDebug, alts_mode_armed);
+        /*cmdMessenger.sendCmd(kDebug, "ALTS Mode value: ");
+        cmdMessenger.sendCmd(kDebug, alts_mode_armed);*/
         break;
 
     case CURR_ALT:
         // Implement the logic for setting Active VAPP Mode
         curr_alt = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "Current Altitude value: ");
-        cmdMessenger.sendCmd(kDebug, curr_alt);
+        /* cmdMessenger.sendCmd(kDebug, "Current Altitude value: ");
+         cmdMessenger.sendCmd(kDebug, curr_alt);*/
         break;
 
     case GS_ARM:
         // Implement the logic for setting Active VAPP Mode
         gs_mode_armed = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "GS Armed value: ");
-        cmdMessenger.sendCmd(kDebug, gs_mode_armed);
+        /*cmdMessenger.sendCmd(kDebug, "GS Armed value: ");
+        cmdMessenger.sendCmd(kDebug, gs_mode_armed);*/
         break;
 
     case GS_ACTIVE:
         // Implement the logic for setting Active VAPP Mode
         gs_mode_active = atoi(data);
-        cmdMessenger.sendCmd(kDebug, "GS Active value: ");
-        cmdMessenger.sendCmd(kDebug, gs_mode_active);
+        /*cmdMessenger.sendCmd(kDebug, "GS Active value: ");
+        cmdMessenger.sendCmd(kDebug, gs_mode_active);*/
         break;
 
     default:
@@ -1015,44 +914,117 @@ int GFC600::roundToClosestHundred(int value)
 
 void GFC600::flashAlts(Label label, Position offset, bool update)
 {
-    const int flashCount          = 10;  // 10 flashes in total (5 seconds with 0.5-second flashes)
-    const int flashDurationMillis = 500; // 0.5 seconds
-
-    unsigned long previousMillis = millis(); // Initialize previousMillis
-
-    bool drawState = false;
+    cmdMessenger.sendCmd(kDebug, "ENTERED FLASH FUNCTION");
+    bool drawState  = false;
+    int  flashCount = 10;
 
     _oledDisplay->setFont(label.Font);
     u8g2_int_t w = _oledDisplay->getStrWidth("ALTS");
     u8g2_int_t h = label.FontSize;
 
     for (int i = 0; i < flashCount; ++i) {
-        unsigned long currentMillis = millis();
 
-        if ((currentMillis - previousMillis) >= flashDurationMillis) {
-            previousMillis = currentMillis;
+        cmdMessenger.sendCmd(kDebug, "Loop iteration: ");
+        cmdMessenger.sendCmd(kDebug, i);
 
-            _oledDisplay->setFont(label.Font);
-            _oledDisplay->setCursor(offset.x + label.Pos.x, offset.y + label.Pos.y);
-            _oledDisplay->setFontMode(0);
+        cmdMessenger.sendCmd(kDebug, "DRAW STATE: ");
+        cmdMessenger.sendCmd(kDebug, drawState);
 
-            if (drawState) {
-                _oledDisplay->setDrawColor(BLACK); // Black box
-                _oledDisplay->drawBox(offset.x + label.Pos.x, offset.y + label.Pos.y - h, w, h);
-                _oledDisplay->setDrawColor(WHITE); // White text
-                _oledDisplay->print("ALTS");
-            } else {
-                _oledDisplay->setDrawColor(WHITE); // White box
-                _oledDisplay->drawBox(offset.x + label.Pos.x, offset.y + label.Pos.y - h, w, h);
-                _oledDisplay->setDrawColor(BLACK); // Black text
-                _oledDisplay->print("ALTS");
-            }
+        _oledDisplay->setFont(label.Font);
+        _oledDisplay->setCursor(offset.x + label.Pos.x, offset.y + label.Pos.y);
+        _oledDisplay->setFontMode(0);
 
-            if (update) _oledDisplay->sendBuffer();
-
-            drawState = !drawState;
+        if (drawState) {
+            _oledDisplay->setDrawColor(BLACK); // Black box
+            _oledDisplay->drawBox(offset.x + label.Pos.x, offset.y + label.Pos.y - h, w, h);
+            _oledDisplay->setDrawColor(WHITE); // White text
+            _oledDisplay->print("ALTS");
+            cmdMessenger.sendCmd(kDebug, "FLASH BLACK ");
+            _oledDisplay->sendBuffer();
+            drawState = !drawState; // Toggle the drawState variable
+            delay(250);
+        } else {
+            _oledDisplay->setDrawColor(WHITE); // White box
+            _oledDisplay->drawBox(offset.x + label.Pos.x, offset.y + label.Pos.y - h, w, h);
+            _oledDisplay->setDrawColor(BLACK); // Black text
+            _oledDisplay->print("ALTS");
+            cmdMessenger.sendCmd(kDebug, "FLASH WHITE");
+            _oledDisplay->sendBuffer();
+            drawState = !drawState; // Toggle the drawState variable
+            delay(250);
         }
-
-        if (update) _oledDisplay->sendBuffer(); // Update display at each loop iteration if requested
     }
+}
+
+bool GFC600::isAltsModeActive(int curr_alt, int alt_ft_value)
+{
+    return (curr_alt >= (alt_ft_value - 300) && curr_alt <= (alt_ft_value - 50)) ||
+           (curr_alt <= (alt_ft_value + 300) && curr_alt >= (alt_ft_value + 50));
+}
+
+void GFC600::handleAltsMode(Layout layout)
+{
+
+    cmdMessenger.sendCmd(kDebug, "ENTERED ALTS HANDLE FUNCTION");
+    if (alt_ft_value == 0) {
+        _displayZeroAltitude(layout);
+    }
+
+    else if (alt_ft_value <= MAX_3_DIGITS_VALUE) {
+        _display3DigitAltitude(alt_ft_value, layout);
+    }
+
+    else if (alt_ft_value <= MAX_4_DIGITS_VALUE) {
+        _display4DigitAltitude(alt_ft_value, layout);
+    }
+
+    else if (alt_ft_value > MAX_4_DIGITS_VALUE) {
+        _display5DigitAltitude(alt_ft_value, layout);
+    }
+
+    _renderLabel("FT", layout.ValueUnits, Offset2LettersArmed, false);
+
+    if (alts_flash_trigger) {
+
+        // Flash the "ALTS" label
+        cmdMessenger.sendCmd(kDebug, "FLASH TRIGGER IS ON, FLASHING: ");
+        flashAlts(layout.ActiveVerticalMode, NoOffset, true);
+        alts_flash_trigger = false;
+        cmdMessenger.sendCmd(kDebug, "FLASH TRIGGER SET TO OFF ");
+    }
+
+    _renderLabel("ALTS", layout.ActiveVerticalMode, NoOffset, false);
+}
+
+void GFC600::_displayZeroAltitude(Layout layout)
+{
+    _oledDisplay->setDrawColor(BLACK);
+    _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 16, VERTICAL_VALUE_3_DIGITS_Y - 20, 36, 20);
+    _renderLabel("0", layout.VerticalDigitsValue, OffsetZero, false);
+}
+
+void GFC600::_display3DigitAltitude(int curr_alt, Layout layout)
+{
+    char curr_alt_string[10];
+    sprintf(curr_alt_string, "%d", curr_alt);
+
+    _oledDisplay->setDrawColor(BLACK);
+    _oledDisplay->drawBox(VERTICAL_VALUE_3_DIGITS_X - 24, VERTICAL_VALUE_3_DIGITS_Y - 15, 18, 20);
+    _renderLabel(curr_alt_string, layout.VerticalDigitsValue, Offset3Digits, false);
+}
+
+void GFC600::_display4DigitAltitude(int curr_alt, Layout layout)
+{
+    char curr_alt_string[10];
+    sprintf(curr_alt_string, "%d", curr_alt);
+
+    _renderLabel(curr_alt_string, layout.VerticalDigitsValue, Offset4Digits, false);
+}
+
+void GFC600::_display5DigitAltitude(int curr_alt, Layout layout)
+{
+    char curr_alt_string[10];
+    sprintf(curr_alt_string, "%d", curr_alt);
+
+    _renderLabel(curr_alt_string, layout.VerticalDigitsValue, Offset5Digits, false);
 }

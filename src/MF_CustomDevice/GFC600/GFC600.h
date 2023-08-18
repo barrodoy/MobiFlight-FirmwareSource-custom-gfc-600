@@ -71,17 +71,14 @@ struct Label {
 };
 
 struct Layout {
-    Label ActiveLateralMode;  // Label for the active lateral mode display.
-    Label ActiveVerticalMode; // Label for the active vertical mode display.
-    Label Vertical2DigitsValue;
-    Label Vertical3DigitsValue; // Label for the vertical value display with 3 digits.
-    Label Vertical4DigitsValue; // Label for the vertical value display with 4 digits.
-    Label Vertical5DigitsValue; // Label for the vertical value display with 4 digits.
-    Label ValueUnits;           // Label for the units of the displayed value.
-    Label ArmedLateralMode;     // Label for the armed lateral mode display.
-    Label ArmedVerticalMode1;   // Label for the first armed vertical mode display.
-    Label ArmedVerticalMode2;   // Label for the second armed vertical mode display.
-    Label VsArrow;              // Label for the vertical speed arrow display.
+    Label ActiveLateralMode;   // Label for the active lateral mode display.
+    Label ActiveVerticalMode;  // Label for the active vertical mode display.
+    Label VerticalDigitsValue; // Label for the vertical value display with 4 digits.
+    Label ValueUnits;          // Label for the units of the displayed value.
+    Label ArmedLateralMode;    // Label for the armed lateral mode display.
+    Label ArmedVerticalMode1;  // Label for the first armed vertical mode display.
+    Label ArmedVerticalMode2;  // Label for the second armed vertical mode display.
+    Label VsArrow;             // Label for the vertical speed arrow display.
 };
 
 struct Line {
@@ -123,4 +120,10 @@ private:
     void decideLateralModes();
     void decideVerticalModes();
     void flashAlts(Label label, Position offset, bool update);
+    void handleAltsMode(Layout layout);
+    bool isAltsModeActive(int curr_alt, int alt_ft_value);
+    void _displayZeroAltitude(Layout layout);
+    void _display3DigitAltitude(int curr_alt, Layout layout);
+    void _display4DigitAltitude(int curr_alt, Layout layout);
+    void _display5DigitAltitude(int curr_alt, Layout layout);
 };
