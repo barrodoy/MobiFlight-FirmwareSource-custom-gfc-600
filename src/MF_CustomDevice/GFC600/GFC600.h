@@ -33,7 +33,7 @@ enum Messages {
     ALTS_MODE,
     CURR_ALT,
     GS_ARM,
-    GS_ACTIVE
+    GS_ACTIVE,
 };
 
 enum LateralMode {
@@ -57,6 +57,7 @@ enum VerticalMode {
     IAS,
     PIT,
     GS,
+    GP,
 };
 
 struct Position {

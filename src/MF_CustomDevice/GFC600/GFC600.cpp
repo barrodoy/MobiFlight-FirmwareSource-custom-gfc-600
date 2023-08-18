@@ -98,7 +98,7 @@ const uint8_t *ACTIVE_MODE_FONT = u8g2_font_logisoso16_tr;  // Font used for the
 const uint8_t *ARMED_MODE_FONT  = u8g2_font_profont12_mr;   // Font used for the armed mode labels.
 const uint8_t *ARROW_FONT       = u8g2_font_9x15_m_symbols; // Font used for arrow symbols.
 
-const char *CLEAR_STRING = "   "; // String representing empty spaces used for clearing the display.
+const char *CLEAR_STRING = "  "; // String representing empty spaces used for clearing the display.
 
 /*
 struct Layout {
@@ -297,9 +297,15 @@ void GFC600::decideLateralModes()
 
     else if (app_mode_selected) {
 
-        if (nav_has_loc) {
+        if (nav_has_loc && !gps_source_selected) {
             activeMode = LOC;
             armedMode  = NONE_LAT;
+        }
+
+        if (gps_source_selected) {
+            activeMode = GPS;
+            cmdMessenger.sendCmd(kDebug, "PRINTING GPS");
+            armedMode = NONE_LAT;
         }
     }
 
@@ -517,14 +523,29 @@ void GFC600::decideVerticalModes()
 
     if (lvl_mode_selected) {
         activeMode = LVL_VERT;
+        if (gps_source_selected) {
+            armedMode2 = GP;
+        }
+
+        else {
+            armedMode2 = GS;
+        }
+
     }
 
     else if (vs_mode_selected) {
 
         if (gs_mode_armed) {
+
             activeMode = VS;
             armedMode1 = ALTS;
-            armedMode2 = GS;
+            if (gps_source_selected) {
+                armedMode2 = GP;
+            }
+
+            else {
+                armedMode2 = GS;
+            }
 
         }
 
@@ -541,7 +562,13 @@ void GFC600::decideVerticalModes()
         if (gs_mode_armed) {
             activeMode = IAS;
             armedMode1 = ALTS;
-            armedMode2 = GS;
+            if (gps_source_selected) {
+                armedMode2 = GP;
+            }
+
+            else {
+                armedMode2 = GS;
+            }
 
         }
 
@@ -558,7 +585,13 @@ void GFC600::decideVerticalModes()
         if (gs_mode_armed) {
             activeMode = PIT;
             armedMode1 = ALTS;
-            armedMode2 = GS;
+            if (gps_source_selected) {
+                armedMode2 = GP;
+            }
+
+            else {
+                armedMode2 = GS;
+            }
 
         }
 
@@ -577,13 +610,30 @@ void GFC600::decideVerticalModes()
             alts_mode_active = isAltsModeActive(curr_alt, alt_ft_value);
             activeMode       = ALTS;
             armedMode1       = ALT;
-            armedMode2       = NONE_VERT;
+            if (gps_source_selected) {
+                armedMode2 = GP;
+            }
+
+            else if (!gps_source_selected) {
+                armedMode2 = GS;
+            }
+
+            else {
+                armedMode2 = NONE_VERT;
+            }
+
         }
 
         else if (gs_mode_armed) {
             activeMode = ALT;
             armedMode1 = NONE_VERT;
-            armedMode2 = GS;
+            if (gps_source_selected) {
+                armedMode2 = GP;
+            }
+
+            else {
+                armedMode2 = GS;
+            }
 
         } else {
             activeMode = ALT;
@@ -593,11 +643,17 @@ void GFC600::decideVerticalModes()
     }
 
     else if (gs_mode_active) {
-        if (app_mode_selected) {
-            activeMode = GS;
-            armedMode1 = NONE_VERT;
-            armedMode2 = NONE_VERT;
+
+        if (gps_source_selected) {
+            activeMode = GP;
         }
+
+        else {
+            activeMode = GS;
+        }
+
+        armedMode1 = NONE_VERT;
+        armedMode2 = NONE_VERT;
     }
 
     if (alts_mode_armed) {
@@ -610,13 +666,6 @@ void GFC600::decideVerticalModes()
         cmdMessenger.sendCmd(kDebug, alts_flash_trigger);
     }
 
-    /*else if (alts_mode_armed && abs(alt_ft_value - curr_alt >= 400)) {
-        activeMode = ALTS;
-        armedMode1 = ALT;
-        armedMode2 = NONE_VERT;
-    }*/
-
-    // handleAltsMode(DisplayLayout);
     renderVerticalMode(DisplayLayout, activeMode, armedMode1, armedMode2);
 }
 
@@ -662,6 +711,10 @@ void GFC600::renderVerticalMode(Layout layout, VerticalMode activeMode, Vertical
         handleAltsMode(layout);
         break;
 
+    case GP:
+        _renderLabel("GP", layout.ActiveVerticalMode, NoOffset, false);
+        break;
+
     default:
         // Clear the area if no valid active mode
         clearArea(LeftLine.StartPos.x + SPACING_FROM_LINES - 2, DISPLAY_START_Y, RightLine.StartPos.x - LeftLine.StartPos.x - SPACING_FROM_LINES - 1, DISPLAY_END_Y);
@@ -683,6 +736,11 @@ void GFC600::renderVerticalMode(Layout layout, VerticalMode activeMode, Vertical
     switch (armedMode2) {
     case GS:
         _renderLabel("GS", layout.ArmedVerticalMode2, NoOffset, false);
+        break;
+
+    case GP:
+        _renderLabel("GP", layout.ArmedVerticalMode2, NoOffset, false);
+        /*cmdMessenger.sendCmd(kDebug, "PRINTING GP ");*/
         break;
 
     case NONE_VERT:
@@ -756,8 +814,8 @@ void GFC600::set(uint8_t messageID, const char *data)
     case APP_MODE:
 
         app_mode_selected = atoi(data);
-        /*cmdMessenger.sendCmd(kDebug, "APP value: ");
-        cmdMessenger.sendCmd(kDebug, app_mode_selected);*/
+        cmdMessenger.sendCmd(kDebug, "APP value: ");
+        cmdMessenger.sendCmd(kDebug, app_mode_selected);
         break;
 
         // Check if GPS Source is active
@@ -916,7 +974,7 @@ void GFC600::flashAlts(Label label, Position offset, bool update)
 {
     cmdMessenger.sendCmd(kDebug, "ENTERED FLASH FUNCTION");
     bool drawState  = false;
-    int  flashCount = 10;
+    int  flashCount = 20;
 
     _oledDisplay->setFont(label.Font);
     u8g2_int_t w = _oledDisplay->getStrWidth("ALTS");

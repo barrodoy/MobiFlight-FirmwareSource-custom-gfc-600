@@ -132,6 +132,12 @@
       "id": 20,
       "label": "GS Active",
       "description": "0 -> Not Selected, 1 -> Selected"
+    },
+	
+				{
+      "id": 21,
+      "label": "GP Active",
+      "description": "0 -> Not Selected, 1 -> Selected"
     }
 	
 	
